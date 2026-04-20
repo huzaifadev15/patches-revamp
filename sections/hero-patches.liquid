@@ -1,0 +1,206 @@
+{%- liquid
+  assign accent = settings.color_accent | default: '#28a745'
+  assign hero_bg = settings.color_hero_bg | default: '#121212'
+-%}
+
+<section
+  class="hero-patches"
+  style="--hero-accent: {{ accent }}; --hero-bg: {{ hero_bg }};"
+>
+  <div class="hero-patches__inner">
+    <div class="hero-patches__copy">
+      {% if section.settings.heading != blank %}
+        <h1 class="hero-patches__title">{{ section.settings.heading | escape }}</h1>
+      {% endif %}
+      {% if section.settings.subheading != blank %}
+        <p class="hero-patches__sub">{{ section.settings.subheading | escape }}</p>
+      {% endif %}
+
+      <ul class="hero-patches__ticks" role="list">
+        {% if section.settings.tick_1 != blank %}
+          <li class="hero-patches__tick">{{ section.settings.tick_1 | escape }}</li>
+        {% endif %}
+        {% if section.settings.tick_2 != blank %}
+          <li class="hero-patches__tick">{{ section.settings.tick_2 | escape }}</li>
+        {% endif %}
+        {% if section.settings.tick_3 != blank %}
+          <li class="hero-patches__tick">{{ section.settings.tick_3 | escape }}</li>
+        {% endif %}
+      </ul>
+
+      <div class="hero-patches__ctas">
+        {% if section.settings.primary_label != blank %}
+          <a class="hero-patches__btn hero-patches__btn--primary" href="{{ section.settings.primary_link | default: '#' }}">
+            {{ section.settings.primary_label | escape }}
+          </a>
+        {% endif %}
+        {% if section.settings.secondary_label != blank %}
+          <a class="hero-patches__btn hero-patches__btn--secondary" href="{{ section.settings.secondary_link | default: '#' }}">
+            {{ section.settings.secondary_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="hero-patches__visual">
+      <div class="hero-patches__visual-frame">
+        {% if section.settings.hero_image != blank %}
+          {% assign hero_alt = section.settings.hero_image.alt | default: shop.name %}
+          <div class="hero-patches__img-wrap">
+            {{
+              section.settings.hero_image
+              | image_url: width: 900
+              | image_tag:
+                loading: 'eager',
+                class: 'hero-patches__img',
+                widths: '400, 600, 800, 900',
+                sizes: '(min-width: 990px) 45vw, 100vw',
+                alt: hero_alt
+            }}
+          </div>
+        {% else %}
+          <div class="hero-patches__placeholder" role="img" aria-label="Product preview placeholder"></div>
+        {% endif %}
+
+        {% if section.settings.badge_text != blank %}
+          <div class="hero-patches__badge">{{ section.settings.badge_text | escape }}</div>
+        {% endif %}
+
+        <div class="hero-patches__card">
+          {% if section.settings.card_col1_title != blank or section.settings.card_col1_text != blank %}
+            <div class="hero-patches__card-col">
+              {% if section.settings.card_col1_title != blank %}
+                <span class="hero-patches__card-label">{{ section.settings.card_col1_title | escape }}</span>
+              {% endif %}
+              {% if section.settings.card_col1_text != blank %}
+                <span class="hero-patches__card-value">{{ section.settings.card_col1_text | escape }}</span>
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if section.settings.card_col2_title != blank or section.settings.card_col2_text != blank %}
+            <div class="hero-patches__card-col">
+              {% if section.settings.card_col2_title != blank %}
+                <span class="hero-patches__card-label">{{ section.settings.card_col2_title | escape }}</span>
+              {% endif %}
+              {% if section.settings.card_col2_text != blank %}
+                <span class="hero-patches__card-value">{{ section.settings.card_col2_text | escape }}</span>
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if section.settings.card_banner != blank %}
+            <div class="hero-patches__card-banner">{{ section.settings.card_banner | escape }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.hero_patches.name",
+  "tag": "section",
+  "class": "section-hero-patches",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Premium Custom Patches with Low 10-Piece Minimums"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Heat-press application in about 20 seconds. 15+ patch styles, rush options, and no setup fees on qualifying orders."
+    },
+    {
+      "type": "text",
+      "id": "tick_1",
+      "label": "Feature 1",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "text",
+      "id": "tick_2",
+      "label": "Feature 2",
+      "default": "Low Minimums"
+    },
+    {
+      "type": "text",
+      "id": "tick_3",
+      "label": "Feature 3",
+      "default": "No Setup Fees"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary button label",
+      "default": "Shop Custom Patches"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button label",
+      "default": "Shop 5 Day Rush Patches"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image",
+      "info": "Cap and patches photo — use a wide PNG or JPG."
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Sticker badge text",
+      "default": "NEW! 10 PIECE MINIMUM"
+    },
+    {
+      "type": "text",
+      "id": "card_col1_title",
+      "label": "Info card column 1 title",
+      "default": "15+ Varieties of Patch Types"
+    },
+    {
+      "type": "text",
+      "id": "card_col1_text",
+      "label": "Info card column 1 subtitle",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "card_col2_title",
+      "label": "Info card column 2 title",
+      "default": "20 Seconds Fast & Easy Application"
+    },
+    {
+      "type": "text",
+      "id": "card_col2_text",
+      "label": "Info card column 2 subtitle",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "card_banner",
+      "label": "Info card bottom banner",
+      "default": "5 Day Rush Shipping Available!"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.hero_patches.name"
+    }
+  ]
+}
+{% endschema %}

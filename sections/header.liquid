@@ -1,0 +1,331 @@
+{%- liquid
+  assign accent = settings.color_accent | default: '#28a745'
+-%}
+
+<header class="header" style="--header-accent: {{ accent }};" data-header>
+  <div class="header__utility" data-utility-bar>
+    <div class="header__inner header__utility-inner">
+      <nav class="header__sister" aria-label="Sister brands">
+        <ul class="header__sister-list">
+          {% if section.blocks.size > 0 %}
+            {% for block in section.blocks %}
+              {% if block.type == 'sister_brand' %}
+                <li class="header__sister-item" {{ block.shopify_attributes }}>
+                  <a
+                    href="{{ block.settings.url | default: '#' }}"
+                    class="header__sister-link{% if block.settings.current %} header__sister-link--active{% endif %}"
+                  >
+                    {{ block.settings.label | escape }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <li class="header__sister-item">
+              <a href="#" class="header__sister-link">Ninja Transfers</a>
+            </li>
+            <li class="header__sister-item">
+              <a href="#" class="header__sister-link">Ninja Blanks</a>
+            </li>
+            <li class="header__sister-item">
+              <a href="{{ routes.root_url }}" class="header__sister-link header__sister-link--active">NINJA PATCHES</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% if section.settings.promo_text != blank %}
+        <p class="header__promo">{{ section.settings.promo_text | escape }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="header__main-wrap">
+    <div class="header__inner header__main">
+      <button
+        type="button"
+        class="header__menu-toggle"
+        aria-expanded="false"
+        aria-controls="HeaderMobileNav"
+        data-mobile-open
+      >
+        <span class="visually-hidden">{{ 'general.accessibility.menu' | t }}</span>
+        <span class="header__menu-toggle-bars" aria-hidden="true"></span>
+      </button>
+
+      <a href="{{ routes.root_url }}" class="header__logo">
+        {% if section.settings.logo != blank %}
+          <span class="header__logo-mark">
+            {{ section.settings.logo | image_url: width: 280 | image_tag: loading: 'eager', alt: shop.name, widths: '140, 200, 280' }}
+          </span>
+        {% else %}
+          <span class="header__logo-icon" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+              <circle cx="20" cy="20" r="18" fill="#111"/>
+              <ellipse cx="20" cy="18" rx="10" ry="9" fill="#fff"/>
+              <path d="M12 26c2 4 14 4 16 0v4H12v-4z" fill="#111"/>
+            </svg>
+          </span>
+          <span class="header__logo-text">
+            <span class="header__logo-title">{{ section.settings.logo_heading | default: shop.name | escape }}</span>
+            {% if section.settings.logo_tagline != blank %}
+              <span class="header__logo-tagline">{{ section.settings.logo_tagline | escape }}</span>
+            {% endif %}
+          </span>
+        {% endif %}
+      </a>
+
+      <form class="header__search" action="{{ routes.search_url }}" method="get" role="search">
+        <label class="visually-hidden" for="HeaderSearch">{{ 'general.search.search' | t }}</label>
+        <input
+          id="HeaderSearch"
+          class="header__search-input"
+          type="search"
+          name="q"
+          placeholder="{{ section.settings.search_placeholder | escape }}"
+          value="{{ search.terms | escape }}"
+          autocomplete="off"
+        >
+        <button type="submit" class="header__search-submit" aria-label="{{ 'general.search.search' | t }}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="header__utils">
+        <div class="header__wait">
+          {% if section.settings.wait_label != blank %}
+            <span class="header__wait-label">{{ section.settings.wait_label | escape }}</span>
+          {% endif %}
+          {% if section.settings.phone != blank %}
+            <a class="header__phone" href="tel:{{ section.settings.phone | replace: ' ', '' }}">{{ section.settings.phone | escape }}</a>
+          {% endif %}
+        </div>
+
+        <div class="header__account">
+          {% if shop.customer_accounts_enabled %}
+            {% if customer %}
+              <a href="{{ routes.account_url }}" class="header__account-link">
+                <span class="header__account-line">{{ customer.first_name | default: customer.email }}</span>
+                <span class="header__account-line header__account-line--strong">{{ 'customer.account.title' | t }}</span>
+              </a>
+            {% else %}
+              <a href="{{ routes.account_login_url }}" class="header__account-link">
+                <span class="header__account-line">{{ section.settings.account_cta_top | escape }}</span>
+                <span class="header__account-line header__account-line--strong">{{ section.settings.account_cta_bottom | escape }}</span>
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <a href="{{ routes.cart_url }}" class="header__cart" id="cart-icon-bubble" aria-label="Shopping cart">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M6 7h15l-1.5 9h-12z"/><path d="M6 7 5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>
+          </svg>
+          {% if cart.item_count > 0 %}
+            <span class="header__cart-count">{{ cart.item_count }}</span>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+
+    <nav class="header__nav" aria-label="Primary">
+      <ul class="header__nav-list">
+        {% if section.settings.menu != blank %}
+          {% for link in section.settings.menu.links %}
+            <li class="header__nav-item{% if link.links != blank %} header__nav-item--dropdown{% endif %}">
+              <a href="{{ link.url }}" class="header__nav-link{% if link.active %} header__nav-link--active{% endif %}">
+                {{ link.title | escape }}
+                {% if link.links != blank %}
+                  <span class="header__nav-chevron" aria-hidden="true"></span>
+                {% endif %}
+              </a>
+              {% if link.links != blank %}
+                <ul class="header__dropdown" role="list">
+                  {% for child in link.links %}
+                    <li>
+                      <a href="{{ child.url }}" class="header__dropdown-link{% if child.active %} header__dropdown-link--active{% endif %}">
+                        {{ child.title | escape }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        {% endif %}
+
+        {% if section.settings.samples_label != blank %}
+          <li class="header__nav-item header__nav-item--accent">
+            <a href="{{ section.settings.samples_url | default: '#' }}" class="header__nav-link header__nav-link--accent">
+              {{ section.settings.samples_label | escape }}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="header__mobile" id="HeaderMobileNav" hidden data-mobile-panel>
+    <div class="header__mobile-inner">
+      <button type="button" class="header__mobile-close" data-mobile-close aria-label="{{ 'general.accessibility.close' | t }}">&times;</button>
+      <form class="header__search header__search--mobile" action="{{ routes.search_url }}" method="get" role="search">
+        <input class="header__search-input" type="search" name="q" placeholder="{{ section.settings.search_placeholder | escape }}">
+        <button type="submit" class="header__search-submit" aria-label="{{ 'general.search.search' | t }}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
+          </svg>
+        </button>
+      </form>
+      <ul class="header__mobile-nav">
+        {% if section.settings.menu != blank %}
+          {% for link in section.settings.menu.links %}
+            <li>
+              <a href="{{ link.url }}">{{ link.title | escape }}</a>
+              {% if link.links != blank %}
+                <ul>
+                  {% for child in link.links %}
+                    <li><a href="{{ child.url }}">{{ child.title | escape }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "Optional. If empty, text logo is shown."
+    },
+    {
+      "type": "text",
+      "id": "logo_heading",
+      "label": "Logo title",
+      "default": "NINJA PATCHES"
+    },
+    {
+      "type": "text",
+      "id": "logo_tagline",
+      "label": "Logo tagline",
+      "default": "Simply apply with a Heatpress"
+    },
+    {
+      "type": "textarea",
+      "id": "promo_text",
+      "label": "Top bar promo",
+      "default": "Select Patches Ship as Fast as 5 Business Days with NinjaFast. 10pc Mins with Free Shipping!"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search Patch Styles"
+    },
+    {
+      "type": "text",
+      "id": "wait_label",
+      "label": "Wait time label",
+      "default": "Wait Time: 0 min"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone number",
+      "default": "888-356-3665"
+    },
+    {
+      "type": "text",
+      "id": "account_cta_top",
+      "label": "Account line 1",
+      "default": "Hello, sign in"
+    },
+    {
+      "type": "text",
+      "id": "account_cta_bottom",
+      "label": "Account line 2",
+      "default": "Account & Reorder"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "text",
+      "id": "samples_label",
+      "label": "Accent nav link label",
+      "default": "Patch Samples"
+    },
+    {
+      "type": "url",
+      "id": "samples_url",
+      "label": "Accent nav link URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "sister_brand",
+      "name": "Sister brand",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Ninja Patches"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "current",
+          "label": "Highlight as current site",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.header.name",
+      "blocks": [
+        {
+          "type": "sister_brand",
+          "settings": {
+            "label": "Ninja Transfers",
+            "current": false
+          }
+        },
+        {
+          "type": "sister_brand",
+          "settings": {
+            "label": "Ninja Blanks",
+            "current": false
+          }
+        },
+        {
+          "type": "sister_brand",
+          "settings": {
+            "label": "NINJA PATCHES",
+            "current": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

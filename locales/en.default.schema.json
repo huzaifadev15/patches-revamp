@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "header": {
+      "name": "Header"
+    },
+    "hero_patches": {
+      "name": "Home hero"
+    },
+    "shop_patch_types": {
+      "name": "Shop all patch types"
+    }
+  }
+}

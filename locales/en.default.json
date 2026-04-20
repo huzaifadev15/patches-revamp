@@ -1,0 +1,30 @@
+{
+  "general": {
+    "search": {
+      "search": "Search"
+    },
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "menu": "Menu",
+      "close": "Close"
+    }
+  },
+  "sections": {
+    "header": {
+      "name": "Header"
+    },
+    "hero_patches": {
+      "name": "Home hero"
+    },
+    "shop_patch_types": {
+      "name": "Shop all patch types"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Account"
+    },
+    "log_in": "Sign in",
+    "log_out": "Log out"
+  }
+}
