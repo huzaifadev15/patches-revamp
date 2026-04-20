@@ -10,7 +10,7 @@
   <div class="hero-patches__inner">
     <div class="hero-patches__copy">
       {% if section.settings.heading != blank %}
-        <h1 class="hero-patches__title">{{ section.settings.heading | escape }}</h1>
+        <h2 class="hero-patches__title">{{ section.settings.heading | escape }}</h2>
       {% endif %}
       {% if section.settings.subheading != blank %}
         <p class="hero-patches__sub">{{ section.settings.subheading | escape }}</p>
@@ -51,7 +51,7 @@
               section.settings.hero_image
               | image_url: width: 900
               | image_tag:
-                loading: 'eager',
+                loading: 'lazy',
                 class: 'hero-patches__img',
                 widths: '400, 600, 800, 900',
                 sizes: '(min-width: 990px) 45vw, 100vw',
@@ -98,7 +98,7 @@
 
 {% schema %}
 {
-  "name": "t:sections.hero_patches.name",
+  "name": "Secondary promo hero",
   "tag": "section",
   "class": "section-hero-patches",
   "settings": [
@@ -112,7 +112,7 @@
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Heat-press application in about 20 seconds. 15+ patch styles, rush options, and no setup fees on qualifying orders."
+      "default": "15+ premium heat-pressable patch styles that apply in just 20 seconds. 5-day rush shipping available."
     },
     {
       "type": "text",
@@ -157,8 +157,7 @@
     {
       "type": "image_picker",
       "id": "hero_image",
-      "label": "Hero image",
-      "info": "Cap and patches photo — use a wide PNG or JPG."
+      "label": "Hero image"
     },
     {
       "type": "text",
@@ -170,25 +169,25 @@
       "type": "text",
       "id": "card_col1_title",
       "label": "Info card column 1 title",
-      "default": "15+ Varieties of Patch Types"
+      "default": "15+ Varieties"
     },
     {
       "type": "text",
       "id": "card_col1_text",
       "label": "Info card column 1 subtitle",
-      "default": ""
+      "default": "Of Patch Types"
     },
     {
       "type": "text",
       "id": "card_col2_title",
       "label": "Info card column 2 title",
-      "default": "20 Seconds Fast & Easy Application"
+      "default": "20 Seconds"
     },
     {
       "type": "text",
       "id": "card_col2_text",
       "label": "Info card column 2 subtitle",
-      "default": ""
+      "default": "Fast & Easy Application"
     },
     {
       "type": "text",
@@ -199,7 +198,7 @@
   ],
   "presets": [
     {
-      "name": "t:sections.hero_patches.name"
+      "name": "Secondary promo hero"
     }
   ]
 }

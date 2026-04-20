@@ -22,13 +22,13 @@
             {% endfor %}
           {% else %}
             <li class="header__sister-item">
-              <a href="#" class="header__sister-link">Ninja Transfers</a>
+              <a href="#" class="header__sister-link">Fineyst Transfers</a>
             </li>
             <li class="header__sister-item">
-              <a href="#" class="header__sister-link">Ninja Blanks</a>
+              <a href="#" class="header__sister-link">Fineyst Blanks</a>
             </li>
             <li class="header__sister-item">
-              <a href="{{ routes.root_url }}" class="header__sister-link header__sister-link--active">NINJA PATCHES</a>
+              <a href="{{ routes.root_url }}" class="header__sister-link header__sister-link--active">FINEYST PATCHES</a>
             </li>
           {% endif %}
         </ul>
@@ -131,7 +131,14 @@
 
     <nav class="header__nav" aria-label="Primary">
       <ul class="header__nav-list">
-        {% if section.settings.menu != blank %}
+        {% if section.settings.use_patch_nav %}
+          {% assign patch_nav_items = 'Embroidered|Full Color|PVC Rubber|Leather|Silicone|Ninja Flex|Woven|Stickers|Supplies & Presses|Support' | split: '|' %}
+          {% for item in patch_nav_items %}
+            <li class="header__nav-item">
+              <a href="#" class="header__nav-link">{{ item }}</a>
+            </li>
+          {% endfor %}
+        {% elsif section.settings.menu != blank %}
           {% for link in section.settings.menu.links %}
             <li class="header__nav-item{% if link.links != blank %} header__nav-item--dropdown{% endif %}">
               <a href="{{ link.url }}" class="header__nav-link{% if link.active %} header__nav-link--active{% endif %}">
@@ -178,7 +185,12 @@
         </button>
       </form>
       <ul class="header__mobile-nav">
-        {% if section.settings.menu != blank %}
+        {% if section.settings.use_patch_nav %}
+          {% assign patch_nav_items = 'Embroidered|Full Color|PVC Rubber|Leather|Silicone|Ninja Flex|Woven|Stickers|Supplies & Presses|Support' | split: '|' %}
+          {% for item in patch_nav_items %}
+            <li><a href="#">{{ item }}</a></li>
+          {% endfor %}
+        {% elsif section.settings.menu != blank %}
           {% for link in section.settings.menu.links %}
             <li>
               <a href="{{ link.url }}">{{ link.title | escape }}</a>
@@ -212,7 +224,7 @@
       "type": "text",
       "id": "logo_heading",
       "label": "Logo title",
-      "default": "NINJA PATCHES"
+      "default": "FINEYST PATCHES"
     },
     {
       "type": "text",
@@ -224,7 +236,7 @@
       "type": "textarea",
       "id": "promo_text",
       "label": "Top bar promo",
-      "default": "Select Patches Ship as Fast as 5 Business Days with NinjaFast. 10pc Mins with Free Shipping!"
+      "default": "Select Patches Ship as Fast as 5 Business Days. 10pc Mins with Free Shipping!"
     },
     {
       "type": "text",
@@ -263,6 +275,12 @@
       "default": "main-menu"
     },
     {
+      "type": "checkbox",
+      "id": "use_patch_nav",
+      "label": "Use patch category nav instead of menu",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "samples_label",
       "label": "Accent nav link label",
@@ -283,7 +301,7 @@
           "type": "text",
           "id": "label",
           "label": "Label",
-          "default": "Ninja Patches"
+          "default": "Fineyst Patches"
         },
         {
           "type": "url",
@@ -306,21 +324,21 @@
         {
           "type": "sister_brand",
           "settings": {
-            "label": "Ninja Transfers",
+            "label": "Fineyst Transfers",
             "current": false
           }
         },
         {
           "type": "sister_brand",
           "settings": {
-            "label": "Ninja Blanks",
+            "label": "Fineyst Blanks",
             "current": false
           }
         },
         {
           "type": "sister_brand",
           "settings": {
-            "label": "NINJA PATCHES",
+            "label": "FINEYST PATCHES",
             "current": true
           }
         }
