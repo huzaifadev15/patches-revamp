@@ -53,7 +53,7 @@
         "type": "patchtypes",
         "settings": {
           "heading": "Shop All Patch Types",
-          "collection": "",
+          "collection": "patches",
           "products_to_show": 8,
           "min_badge": "10pc min",
           "button_label": "Customize"
@@ -124,6 +124,12 @@
         "settings": {
           "heading": "The Fineyst Patch Ordering Process",
           "subheading": "Simplifying the Process with Satisfaction Guaranteed"
+        }
+      },
+      "embroiderygallery": {
+        "type": "embroiderygallery",
+        "settings": {
+          "heading": "The Leader in Custom Embroidered Patches"
         }
       }
     },
