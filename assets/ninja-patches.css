@@ -907,6 +907,38 @@ body.mobile-nav-open {
   pointer-events: none;
 }
 
+/* ----- Popular products ----- */
+
+.popular-products {
+  padding-top: 0.5rem;
+}
+
+.popular-products .shop-types__heading {
+  font-size: 0.95rem;
+  margin-bottom: 0.95rem;
+}
+
+.popular-products .shop-types__grid {
+  gap: 1.1rem;
+}
+
+.popular-products .shop-types__media {
+  aspect-ratio: 1.12;
+}
+
+.popular-products .shop-types__content {
+  padding-top: 0.55rem;
+}
+
+.popular-products .shop-types__price-line {
+  margin-top: 0.3rem;
+}
+
+.popular-products .shop-types__btn {
+  margin-top: 0.55rem;
+  min-height: 28px;
+}
+
 /* Chat bubble */
 
 .chat-fab {
