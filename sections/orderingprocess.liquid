@@ -1,0 +1,124 @@
+<section class="ordering-process section-{{ section.id }}">
+  <div class="ordering-process__inner">
+    <header class="ordering-process__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="ordering-process__title">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+      {% if section.settings.subheading != blank %}
+        <p class="ordering-process__subheading">{{ section.settings.subheading | escape }}</p>
+      {% endif %}
+    </header>
+
+    <div class="ordering-process__grid">
+      {% for block in section.blocks %}
+        <article class="ordering-process__card" {{ block.shopify_attributes }}>
+          <div class="ordering-process__media-wrap">
+            <span class="ordering-process__step">{{ forloop.index }}</span>
+            <div class="ordering-process__media">
+              {% if block.settings.image != blank %}
+                {% assign img_alt = block.settings.image.alt | default: block.settings.title %}
+                {{
+                  block.settings.image
+                  | image_url: width: 520
+                  | image_tag: loading: 'lazy', class: 'ordering-process__img', widths: '260, 380, 520', sizes: '(min-width: 990px) 22vw, 44vw', alt: img_alt
+                }}
+              {% else %}
+                <div class="ordering-process__ph" aria-hidden="true"></div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if block.settings.title != blank %}
+            <h3 class="ordering-process__card-title">{{ block.settings.title | escape }}</h3>
+          {% endif %}
+          {% if block.settings.text != blank %}
+            <p class="ordering-process__card-text">{{ block.settings.text | escape }}</p>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ordering process",
+  "tag": "section",
+  "class": "section-ordering-process",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Fineyst Patch Ordering Process"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Simplifying the Process with Satisfaction Guaranteed"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Upload Your Designs & Place Your Order Online"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Use our online patch builder to place your order quickly and easily."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Ordering process",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Upload Your Designs & Place Your Order Online",
+            "text": "Use our simple one-page ordering flow to upload your custom artwork."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Approve Your Patch Artwork Proofs",
+            "text": "Approve your free digital proof before we begin production."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "We Create & Ship Your Custom Patch Order",
+            "text": "Our team creates your patches quickly with reliable quality."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Heatpress when Ready. Keep Extras in Storage Forever",
+            "text": "Apply only what you need now and store the rest for later."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

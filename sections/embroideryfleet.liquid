@@ -1,0 +1,62 @@
+<section class="embroidery-fleet section-{{ section.id }}">
+  <div class="embroidery-fleet__media">
+    {% if section.settings.background_image != blank %}
+      {{
+        section.settings.background_image
+        | image_url: width: 2200
+        | image_tag:
+          loading: 'lazy',
+          class: 'embroidery-fleet__img',
+          widths: '900, 1200, 1600, 2200',
+          sizes: '100vw',
+          alt: section.settings.heading
+      }}
+    {% else %}
+      <div class="embroidery-fleet__placeholder" aria-hidden="true"></div>
+    {% endif %}
+    <div class="embroidery-fleet__overlay"></div>
+  </div>
+
+  <div class="embroidery-fleet__inner">
+    <div class="embroidery-fleet__content">
+      {% if section.settings.eyebrow != blank %}
+        <p class="embroidery-fleet__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="embroidery-fleet__heading">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Embroidery fleet banner",
+  "tag": "section",
+  "class": "section-embroidery-fleet",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "We Understand Service, Quality, and Speed Matter Most"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "An Unrivaled Fleet of 1000+ Embroidery Heads"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Embroidery fleet banner"
+    }
+  ]
+}
+{% endschema %}

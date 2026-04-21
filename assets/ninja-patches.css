@@ -939,6 +939,246 @@ body.mobile-nav-open {
   min-height: 28px;
 }
 
+/* ----- Commercial video ----- */
+
+.commercial-video {
+  background: #ececec;
+  padding: 2rem 1.25rem;
+}
+
+.commercial-video__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .commercial-video__inner {
+    grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+    gap: 1.7rem;
+  }
+}
+
+.commercial-video__media {
+  width: 100%;
+}
+
+.commercial-video__player,
+.commercial-video__embed-wrap {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.commercial-video__player {
+  display: block;
+  height: auto;
+}
+
+.commercial-video__embed-wrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+
+.commercial-video__embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.commercial-video__placeholder {
+  border-radius: 8px;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(120deg, #cfcfcf, #dedede);
+}
+
+.commercial-video__title {
+  margin: 0 0 0.55rem;
+  font-size: clamp(1.35rem, 2.1vw, 2rem);
+  line-height: 1.2;
+  color: #111;
+}
+
+.commercial-video__text {
+  color: #3e3e3e;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.commercial-video__text p {
+  margin: 0;
+}
+
+/* ----- Embroidery fleet banner ----- */
+
+.embroidery-fleet {
+  position: relative;
+  min-height: 355px;
+  overflow: hidden;
+}
+
+.embroidery-fleet__media {
+  position: absolute;
+  inset: 0;
+}
+
+.embroidery-fleet__img,
+.embroidery-fleet__placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.embroidery-fleet__placeholder {
+  background: linear-gradient(120deg, #2f3b44, #4a565f);
+}
+
+.embroidery-fleet__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 13, 16, 0.5);
+}
+
+.embroidery-fleet__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 355px;
+  display: flex;
+  align-items: center;
+  padding: 2rem 1.25rem;
+}
+
+.embroidery-fleet__content {
+  max-width: 700px;
+  color: #fff;
+}
+
+.embroidery-fleet__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.embroidery-fleet__heading {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  line-height: 1.15;
+  color: #fff;
+}
+
+/* ----- Ordering process ----- */
+
+.ordering-process {
+  padding: 2.2rem 1.25rem 2.8rem;
+  background: #fff;
+}
+
+.ordering-process__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.ordering-process__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem 1.2rem;
+  margin-bottom: 1.1rem;
+}
+
+.ordering-process__title {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.2;
+  color: #111;
+}
+
+.ordering-process__subheading {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #888;
+}
+
+.ordering-process__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35rem 1.1rem;
+}
+
+@media (min-width: 900px) {
+  .ordering-process__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ordering-process__media-wrap {
+  position: relative;
+}
+
+.ordering-process__step {
+  position: absolute;
+  left: 0.45rem;
+  top: 0.45rem;
+  z-index: 2;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  background: #2eb451;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ordering-process__media {
+  aspect-ratio: 1.05;
+  background: #f0eff5;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0.4rem;
+}
+
+.ordering-process__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ordering-process__ph {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(120deg, #e1e1e8, #f3f3f6);
+}
+
+.ordering-process__card-title {
+  margin: 0.75rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #111;
+}
+
+.ordering-process__card-text {
+  margin: 0.35rem 0 0;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: #777;
+}
+
 /* Chat bubble */
 
 .chat-fab {
