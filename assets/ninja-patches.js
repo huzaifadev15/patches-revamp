@@ -227,12 +227,18 @@
       var avgEl = sizer.querySelector('[data-size-average]');
       var notesToggle = sizer.querySelector('[data-notes-toggle]');
       var notesField = sizer.querySelector('[data-notes-field]');
+      var calcUnitHidden = document.querySelector('[data-calc-unit-hidden]');
+      var calcTotalHidden = document.querySelector('[data-calc-total-hidden]');
+      var calcQuoteTokenHidden = document.querySelector('[data-calc-quote-token-hidden]');
       var tierBody = document.querySelector('[data-tier-body]');
       var pricingUrl = sizer.getAttribute('data-pricing-url');
       var productName = (sizer.getAttribute('data-product-name') || '').trim();
+      var quoteUrl = (sizer.getAttribute('data-quote-url') || '').trim();
       var basePrice = 6.71;
       var pricingRows = [];
       var pricingReady = false;
+      var quoteTimer = null;
+      var quoteRequestId = 0;
 
       function clampQty(v) {
         var n = parseInt(v || '10', 10);
@@ -311,7 +317,69 @@
         if (priceEl) priceEl.textContent = '$' + unit.toFixed(2);
         if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
         if (avgEl) avgEl.textContent = ((w + h) / 2).toFixed(1) + '"';
+        if (calcUnitHidden) calcUnitHidden.value = '$' + unit.toFixed(2);
+        if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
+        if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = '';
         renderTierTable(h, qty);
+        requestQuoteFromBackend(w, h, qty);
+      }
+
+      function collectOptions() {
+        var options = {};
+        sizer.querySelectorAll('[data-option-group]').forEach(function (group) {
+          var key = group.getAttribute('data-option-group');
+          var hidden = group.querySelector('[data-option-hidden]');
+          if (!key || !hidden) return;
+          options[key] = hidden.value || '';
+        });
+        var bgInput = sizer.querySelector('input[name="properties[Patch Background Color]"]');
+        var borderThreadInput = sizer.querySelector('input[name="properties[Border Thread Color]"]');
+        if (bgInput) options.backgroundColor = bgInput.value || '';
+        if (borderThreadInput) options.borderThreadColor = borderThreadInput.value || '';
+        return options;
+      }
+
+      function setCalculatedValues(unit, total, quoteToken) {
+        if (priceEl) priceEl.textContent = '$' + unit.toFixed(2);
+        if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
+        if (calcUnitHidden) calcUnitHidden.value = '$' + unit.toFixed(2);
+        if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
+        if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = quoteToken || '';
+      }
+
+      function requestQuoteFromBackend(width, height, qty) {
+        if (!quoteUrl) return;
+        if (quoteTimer) clearTimeout(quoteTimer);
+        quoteTimer = setTimeout(function () {
+          quoteRequestId += 1;
+          var reqId = quoteRequestId;
+          fetch(quoteUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              productName: productName,
+              width: width,
+              height: height,
+              qty: qty,
+              options: collectOptions()
+            })
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error('quote request failed');
+              return res.json();
+            })
+            .then(function (data) {
+              if (reqId !== quoteRequestId) return;
+              if (!data || data.ok !== true) return;
+              var unit = parseFloat(data.unitPrice);
+              var total = parseFloat(data.total);
+              if (isNaN(unit) || isNaN(total)) return;
+              setCalculatedValues(unit, total, data.quoteToken || '');
+            })
+            .catch(function () {
+              // Keep local pricing results as fallback.
+            });
+        }, 250);
       }
 
       function renderTierTable(heightValue, qty) {
@@ -378,6 +446,15 @@
         });
       }
 
+      sizer
+        .querySelectorAll(
+          'input[name="properties[Patch Background Color]"], input[name="properties[Border Thread Color]"]'
+        )
+        .forEach(function (input) {
+          input.addEventListener('input', updateSizer);
+          input.addEventListener('change', updateSizer);
+        });
+
       sizer.querySelectorAll('[data-option-group]').forEach(function (group) {
         var hidden = group.querySelector('[data-option-hidden]');
         var label = group.querySelector('[data-option-selected-label]');
@@ -391,6 +468,7 @@
             var value = card.getAttribute('data-option-value') || '';
             if (hidden) hidden.value = value;
             if (label) label.textContent = value;
+            updateSizer();
           });
         });
       });

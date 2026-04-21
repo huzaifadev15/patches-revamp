@@ -49,8 +49,15 @@
         <span>Upgrade to 5 Day Rush with 25+ pcs</span>
       </div>
 
+      {% assign checkout_variant = product.first_available_variant | default: product.selected_or_first_available_variant %}
+      {% if product.available and checkout_variant and checkout_variant.available %}
       {% form 'product', product, class: 'product-page__form' %}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        {% if checkout_variant %}
+          <input type="hidden" name="id" value="{{ checkout_variant.id }}">
+        {% endif %}
+        <input type="hidden" name="properties[Calculated Unit Price]" value="" data-calc-unit-hidden>
+        <input type="hidden" name="properties[Calculated Total]" value="" data-calc-total-hidden>
+        <input type="hidden" name="properties[Quote Token]" value="" data-calc-quote-token-hidden>
 
         <div class="product-page__upload-card" data-upload-dropzone>
           <div class="product-page__upload-icon" aria-hidden="true">⬆</div>
@@ -166,6 +173,7 @@
           data-patch-sizer
           data-pricing-url="{{ 'pricing.json' | asset_url }}"
           data-product-name="{{ product.title | strip | escape }}"
+          data-quote-url="{{ section.settings.quote_api_url | escape }}"
           hidden
         >
           <div class="product-page__sizer-top">
@@ -285,9 +293,24 @@
         </div>
         <input type="hidden" name="return_to" value="/cart">
         <div class="product-page__checkout-wrap" data-checkout-wrap hidden>
-          <button type="submit" class="product-page__checkout-btn">PROCEED TO CHECKOUT</button>
+          <button
+            type="submit"
+            class="product-page__checkout-btn"
+            {% if checkout_variant == blank or checkout_variant.available == false %}disabled{% endif %}
+          >
+            {% if checkout_variant and checkout_variant.available %}
+              PROCEED TO CHECKOUT
+            {% else %}
+              SOLD OUT
+            {% endif %}
+          </button>
         </div>
       {% endform %}
+      {% else %}
+        <div class="product-page__soldout-banner">
+          This product is currently sold out. Please choose another patch type or restock this item in Shopify admin.
+        </div>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -295,6 +318,13 @@
 {% schema %}
 {
   "name": "Main product",
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "quote_api_url",
+      "label": "Quote API URL",
+      "info": "Example: https://your-backend.com/api/quote"
+    }
+  ]
 }
 {% endschema %}

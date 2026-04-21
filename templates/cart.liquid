@@ -4,6 +4,7 @@
 
     {% if cart.item_count > 0 %}
       {% form 'cart', cart %}
+        {% assign displayed_subtotal_cents = 0 %}
         <div class="cart-page__table">
           <div class="cart-page__head">
             <span>Product</span>
@@ -12,6 +13,16 @@
           </div>
 
           {% for item in cart.items %}
+            {% assign displayed_total = item.final_line_price | money %}
+            {% assign displayed_total_cents = item.final_line_price %}
+            {% for p in item.properties %}
+              {% if p.first == 'Calculated Total' and p.last != blank %}
+                {% assign displayed_total = p.last %}
+                {% assign calc_total_number = p.last | remove: '$' | remove: ',' | strip %}
+                {% assign displayed_total_cents = calc_total_number | times: 100 | round %}
+              {% endif %}
+            {% endfor %}
+            {% assign displayed_subtotal_cents = displayed_subtotal_cents | plus: displayed_total_cents %}
             <div class="cart-page__row">
               <div class="cart-page__product">
                 {% if item.image %}
@@ -33,7 +44,14 @@
                       <p class="cart-page__meta"><strong>{{ key }}:</strong> {{ val }}</p>
                     {% endif %}
                   {% endfor %}
-                  <a class="cart-page__remove" href="{{ item.url_to_remove }}">Remove</a>
+                  <button
+                    class="cart-page__remove"
+                    type="submit"
+                    formaction="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+                    formmethod="post"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
               <div>
@@ -46,13 +64,13 @@
                   aria-label="Quantity for {{ item.product.title | escape }}"
                 >
               </div>
-              <div class="cart-page__line-total">{{ item.final_line_price | money }}</div>
+              <div class="cart-page__line-total">{{ displayed_total }}</div>
             </div>
           {% endfor %}
         </div>
 
         <div class="cart-page__footer">
-          <p class="cart-page__subtotal">Subtotal: <strong>{{ cart.total_price | money }}</strong></p>
+          <p class="cart-page__subtotal">Subtotal: <strong>{{ displayed_subtotal_cents | money }}</strong></p>
           <div class="cart-page__actions">
             <button class="cart-page__btn cart-page__btn--muted" type="submit" name="update">Update cart</button>
             <button class="cart-page__btn" type="submit" name="checkout">Checkout</button>
