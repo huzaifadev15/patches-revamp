@@ -70,13 +70,52 @@
         </div>
         <div class="product-page__progress" data-upload-progress hidden>
           <div class="product-page__progress-character" aria-hidden="true">
-            <span class="product-page__ninja-head"></span>
-            <span class="product-page__ninja-body"></span>
-            <span class="product-page__ninja-arm product-page__ninja-arm--left"></span>
-            <span class="product-page__ninja-arm product-page__ninja-arm--right"></span>
-            <span class="product-page__ninja-leg product-page__ninja-leg--left"></span>
-            <span class="product-page__ninja-leg product-page__ninja-leg--right"></span>
-            <span class="product-page__ninja-sword"></span>
+            <svg class="product-page__ninja-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="ninjaSuit" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#3fd27f"/>
+                  <stop offset="100%" stop-color="#1f8d50"/>
+                </linearGradient>
+                <linearGradient id="ninjaDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#1b703e"/>
+                  <stop offset="100%" stop-color="#145f34"/>
+                </linearGradient>
+                <linearGradient id="blade" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#9ea9b2"/>
+                  <stop offset="55%" stop-color="#f3f8fc"/>
+                  <stop offset="100%" stop-color="#7d8a95"/>
+                </linearGradient>
+              </defs>
+              <ellipse cx="60" cy="106" rx="29" ry="7" fill="rgba(0,0,0,0.22)"/>
+              <g class="ninja-svg__character">
+                <g class="ninja-svg__sword">
+                  <rect x="69" y="38" width="34" height="4.5" rx="2" fill="url(#blade)"/>
+                  <circle cx="69" cy="40" r="3.5" fill="#f3a12b"/>
+                </g>
+                <g class="ninja-svg__leg-left">
+                  <rect x="47" y="70" width="12" height="24" rx="6" fill="url(#ninjaDark)"/>
+                </g>
+                <g class="ninja-svg__leg-right">
+                  <rect x="61" y="70" width="12" height="24" rx="6" fill="url(#ninjaDark)"/>
+                </g>
+                <g class="ninja-svg__body">
+                  <rect x="39" y="41" width="42" height="34" rx="14" fill="url(#ninjaSuit)"/>
+                  <ellipse cx="60" cy="58" rx="14" ry="9" fill="rgba(255,255,255,0.16)"/>
+                </g>
+                <g class="ninja-svg__arm-left">
+                  <rect x="32" y="47" width="10" height="24" rx="5" fill="url(#ninjaDark)"/>
+                </g>
+                <g class="ninja-svg__arm-right">
+                  <rect x="78" y="47" width="10" height="24" rx="5" fill="url(#ninjaDark)"/>
+                </g>
+                <g class="ninja-svg__head">
+                  <circle cx="60" cy="30" r="17" fill="url(#ninjaSuit)"/>
+                  <rect x="47" y="26" width="26" height="9" rx="4.5" fill="#10261a"/>
+                  <circle cx="55" cy="30.5" r="1.7" fill="#fff"/>
+                  <circle cx="65" cy="30.5" r="1.7" fill="#fff"/>
+                </g>
+              </g>
+            </svg>
           </div>
           <p class="product-page__progress-percent" data-upload-percent>0%</p>
           <div class="product-page__progress-track" aria-hidden="true">
@@ -111,53 +150,144 @@
                   <th>Qty Discount</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody data-tier-body>
                 <tr class="is-active">
-                  <td>10-24 pcs</td>
+                  <td>10+</td>
                   <td>$6.71 ea</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>25-49</td>
-                  <td>$5.03 ea</td>
-                  <td class="is-green">25% off</td>
-                </tr>
-                <tr>
-                  <td>50-99</td>
-                  <td>$4.36 ea</td>
-                  <td class="is-green">35% off</td>
-                </tr>
-                <tr>
-                  <td>100-199</td>
-                  <td>$3.35 ea</td>
-                  <td class="is-green">50% off</td>
-                </tr>
-                <tr>
-                  <td>200-499</td>
-                  <td>$2.35 ea</td>
-                  <td class="is-green">65% off</td>
-                </tr>
-                <tr>
-                  <td>500+</td>
-                  <td>$1.68 ea</td>
-                  <td class="is-green">75% off</td>
+                  <td>-</td>
                 </tr>
               </tbody>
             </table>
             <button type="button" class="product-page__change-file" data-upload-change>Change uploaded file</button>
           </div>
         </div>
-
-        <div class="product-page__actions">
-          <div class="product-page__qty-wrap">
-            <label class="product-page__label" for="Quantity">Qty</label>
-            <input id="Quantity" class="product-page__qty" type="number" name="quantity" min="1" value="100">
+        <div
+          class="product-page__sizer"
+          data-patch-sizer
+          data-pricing-url="{{ 'pricing.json' | asset_url }}"
+          data-product-name="{{ product.title | strip | escape }}"
+          hidden
+        >
+          <div class="product-page__sizer-top">
+            <h3>Select Your Patch Size:</h3>
+            <a href="#" class="product-page__size-guide">Patch Size Guide</a>
           </div>
-          <button type="submit" class="product-page__add">Add to cart</button>
+          <div class="product-page__sizer-grid">
+            <div>
+              <label>Width (inches)</label>
+              <div class="product-page__stepper">
+                <button type="button" data-size-dec="width">−</button>
+                <input type="number" step="0.01" min="1" value="2" data-size-width name="properties[Patch Width (in)]">
+                <button type="button" data-size-inc="width">+</button>
+              </div>
+            </div>
+            <div>
+              <label>Height (inches)</label>
+              <div class="product-page__stepper">
+                <button type="button" data-size-dec="height">−</button>
+                <input type="number" step="0.01" min="1" value="2.19" data-size-height name="properties[Patch Height (in)]">
+                <button type="button" data-size-inc="height">+</button>
+              </div>
+            </div>
+            <div>
+              <label>Price</label>
+              <p class="product-page__sizer-price"><span data-size-price>$6.71</span><small>ea.</small></p>
+            </div>
+            <div>
+              <label for="Quantity">Qty</label>
+              <input id="Quantity" class="product-page__qty" type="number" name="quantity" min="10" value="10" data-size-qty>
+              <p class="product-page__sizer-min">10 Piece Min</p>
+            </div>
+            <div>
+              <label>Total</label>
+              <p class="product-page__sizer-total" data-size-total>$67.10</p>
+            </div>
+          </div>
+          <p class="product-page__patch-size">Patch Size <strong data-size-average>2.5"</strong></p>
+          <label class="product-page__notes-toggle">
+            <input type="checkbox" checked data-notes-toggle>
+            Add Free Design Notes (Optional)
+          </label>
+          <textarea
+            class="product-page__notes"
+            name="properties[Design Notes]"
+            rows="3"
+            data-notes-field
+            placeholder="i.e. Keep the white inside of the text. Change the border of the logo to blue."
+          ></textarea>
+
+          <div class="product-page__options">
+            <h3>Select Your Options Below</h3>
+            <p class="product-page__options-sub">These do not affect your final price.</p>
+
+            <div class="product-page__option-group" data-option-group="shape">
+              <p class="product-page__option-title">Select Shape: <strong data-option-selected-label>Circle</strong></p>
+              <input type="hidden" name="properties[Shape]" value="Circle" data-option-hidden>
+              <div class="product-page__option-grid">
+                <button type="button" class="product-page__option-card is-active" data-option-value="Circle">
+                  <span class="product-page__option-thumb">◯</span><span>Circle</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Square">
+                  <span class="product-page__option-thumb">▢</span><span>Square</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Rectangle">
+                  <span class="product-page__option-thumb">▭</span><span>Rectangle</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Oval">
+                  <span class="product-page__option-thumb">⬭</span><span>Oval</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Custom Shape">
+                  <span class="product-page__option-thumb">✦</span><span>Custom Shape</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="product-page__option-group">
+              <p class="product-page__option-title">Patch Background Color:</p>
+              <input type="text" class="product-page__option-input" name="properties[Patch Background Color]" placeholder="e.g. White">
+            </div>
+
+            <div class="product-page__option-group" data-option-group="border">
+              <p class="product-page__option-title">Border Style Circle: <strong data-option-selected-label>Embroidered / Hot Cut (Most Popular)</strong></p>
+              <input type="hidden" name="properties[Border Style]" value="Embroidered / Hot Cut (Most Popular)" data-option-hidden>
+              <div class="product-page__option-grid product-page__option-grid--small">
+                <button type="button" class="product-page__option-card is-active" data-option-value="Embroidered / Hot Cut (Most Popular)">
+                  <span class="product-page__option-thumb">▨</span><span>Embroidered</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Merrowed Border">
+                  <span class="product-page__option-thumb">◫</span><span>Merrowed</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="product-page__option-group">
+              <p class="product-page__option-title">Border Thread Color:</p>
+              <input type="text" class="product-page__option-input" name="properties[Border Thread Color]" placeholder="e.g. Gold">
+            </div>
+
+            <div class="product-page__option-group" data-option-group="backing">
+              <p class="product-page__option-title">Select Your Backing: <strong data-option-selected-label>Heat Applied (Most Popular)</strong></p>
+              <input type="hidden" name="properties[Backing]" value="Heat Applied (Most Popular)" data-option-hidden>
+              <div class="product-page__option-grid product-page__option-grid--small">
+                <button type="button" class="product-page__option-card is-active" data-option-value="Heat Applied (Most Popular)">
+                  <span class="product-page__option-thumb">⬒</span><span>Heat Applied</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Peel & Stick">
+                  <span class="product-page__option-thumb">◩</span><span>Peel & Stick</span>
+                </button>
+                <button type="button" class="product-page__option-card" data-option-value="Velcro">
+                  <span class="product-page__option-thumb">▧</span><span>Velcro</span>
+                </button>
+              </div>
+              <p class="product-page__options-desc">Our most popular method allows you to quickly and conveniently use a heat press or even a home iron if the right pressure and heat are applied.</p>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="return_to" value="/cart">
+        <div class="product-page__checkout-wrap" data-checkout-wrap hidden>
+          <button type="submit" class="product-page__checkout-btn">PROCEED TO CHECKOUT</button>
         </div>
       {% endform %}
-
-      <a href="#" class="product-page__calculator">Price Calculator</a>
     </div>
   </div>
 </section>
