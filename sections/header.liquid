@@ -134,8 +134,60 @@
         {% if section.settings.use_patch_nav %}
           {% assign patch_nav_items = 'Embroidered|Full Color|PVC Rubber|Leather|Silicone|Ninja Flex|Woven|Stickers|Supplies & Presses|Support' | split: '|' %}
           {% for item in patch_nav_items %}
-            <li class="header__nav-item">
+            {% assign item_handle = item | handleize %}
+            <li class="header__nav-item header__nav-item--dropdown header__nav-item--mega">
               <a href="#" class="header__nav-link">{{ item }}</a>
+              <div class="header__mega">
+                <div class="header__mega-grid">
+                  {% assign has_preview = false %}
+                  {% for block in section.blocks %}
+                    {% assign block_parent_handle = block.settings.parent_nav | handleize %}
+                    {% if block.type == 'patch_preview' and block_parent_handle == item_handle %}
+                      {% assign has_preview = true %}
+                      <a class="header__mega-card" href="{{ block.settings.url | default: '#' }}" {{ block.shopify_attributes }}>
+                        <div class="header__mega-media">
+                          {% if block.settings.badge != blank %}
+                            <span class="header__mega-badge">{{ block.settings.badge | escape }}</span>
+                          {% endif %}
+                          {% if block.settings.image != blank %}
+                            {% assign preview_alt = block.settings.image.alt | default: block.settings.title %}
+                            {{
+                              block.settings.image
+                              | image_url: width: 420
+                              | image_tag: loading: 'lazy', class: 'header__mega-img', widths: '200, 320, 420', sizes: '(min-width: 990px) 180px, 45vw', alt: preview_alt
+                            }}
+                          {% else %}
+                            <div class="header__mega-ph" aria-hidden="true"></div>
+                          {% endif %}
+                        </div>
+                        <span class="header__mega-title">{{ block.settings.title | default: 'Patch style' | escape }}</span>
+                      </a>
+                    {% endif %}
+                  {% endfor %}
+                  {% unless has_preview %}
+                    <a class="header__mega-card" href="#">
+                      <div class="header__mega-media"><span class="header__mega-badge">10pc min.</span><div class="header__mega-ph"></div></div>
+                      <span class="header__mega-title">Embroidered</span>
+                    </a>
+                    <a class="header__mega-card" href="#">
+                      <div class="header__mega-media"><span class="header__mega-badge">10pc min.</span><div class="header__mega-ph"></div></div>
+                      <span class="header__mega-title">3D Embroidered</span>
+                    </a>
+                    <a class="header__mega-card" href="#">
+                      <div class="header__mega-media"><span class="header__mega-badge">10pc min.</span><div class="header__mega-ph"></div></div>
+                      <span class="header__mega-title">Custom Name Patches</span>
+                    </a>
+                    <a class="header__mega-card" href="#">
+                      <div class="header__mega-media"><span class="header__mega-badge">10pc min.</span><div class="header__mega-ph"></div></div>
+                      <span class="header__mega-title">Chenille</span>
+                    </a>
+                    <a class="header__mega-card" href="#">
+                      <div class="header__mega-media"><span class="header__mega-badge">25pc min.</span><div class="header__mega-ph"></div></div>
+                      <span class="header__mega-title">Custom Tackle Twill Letters</span>
+                    </a>
+                  {% endunless %}
+                </div>
+              </div>
             </li>
           {% endfor %}
         {% elsif section.settings.menu != blank %}
@@ -313,6 +365,41 @@
           "id": "current",
           "label": "Highlight as current site",
           "default": true
+        }
+      ]
+    },
+    {
+      "type": "patch_preview",
+      "name": "Patch nav preview",
+      "settings": [
+        {
+          "type": "text",
+          "id": "parent_nav",
+          "label": "Parent nav label",
+          "default": "Embroidered",
+          "info": "Exact nav label (e.g., Embroidered, Full Color, PVC Rubber)."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Preview image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card title",
+          "default": "Embroidered"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge text",
+          "default": "10pc min."
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Card URL"
         }
       ]
     }

@@ -1,0 +1,77 @@
+<section class="product-page section-{{ section.id }}">
+  <div class="product-page__inner">
+    <div class="product-page__gallery">
+      {% if product.media.size > 0 %}
+        <div class="product-page__main-media">
+          {{
+            product.featured_media
+            | image_url: width: 1200
+            | image_tag: loading: 'eager', class: 'product-page__img', widths: '600, 900, 1200', sizes: '(min-width: 990px) 48vw, 100vw', alt: product.title
+          }}
+        </div>
+        <div class="product-page__thumbs">
+          {% for media in product.media limit: 6 %}
+            <a class="product-page__thumb" href="{{ media | image_url: width: 1200 }}">
+              {{
+                media
+                | image_url: width: 240
+                | image_tag: loading: 'lazy', class: 'product-page__thumb-img', widths: '120, 180, 240', sizes: '120px', alt: product.title
+              }}
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="product-page__main-media product-page__main-media--ph" aria-hidden="true"></div>
+      {% endif %}
+    </div>
+
+    <div class="product-page__info">
+      <h1 class="product-page__title">{{ product.title | escape }}</h1>
+      <p class="product-page__price">
+        {% if product.compare_at_price > product.price %}
+          <span class="product-page__price-old">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        <span class="product-page__price-current">{{ product.price | money }}</span>
+      </p>
+
+      {% if product.description != blank %}
+        <div class="product-page__desc rte">{{ product.description }}</div>
+      {% endif %}
+
+      {% form 'product', product, class: 'product-page__form' %}
+        {% unless product.has_only_default_variant %}
+          <label class="product-page__label" for="VariantSelect">Select option</label>
+          <select id="VariantSelect" name="id" class="product-page__select">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                {{ variant.title }}{% unless variant.available %} - Sold out{% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        {% endunless %}
+
+        <div class="product-page__qty-wrap">
+          <label class="product-page__label" for="Quantity">Quantity</label>
+          <input id="Quantity" class="product-page__qty" type="number" name="quantity" min="1" value="1">
+        </div>
+
+        <button type="submit" name="add" class="product-page__add" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+          {% if product.selected_or_first_available_variant.available %}
+            Add to cart
+          {% else %}
+            Sold out
+          {% endif %}
+        </button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main product",
+  "settings": []
+}
+{% endschema %}
