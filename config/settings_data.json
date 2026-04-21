@@ -1,6 +1,132 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "color_accent": "#28a745",
-    "color_hero_bg": "#121212"
+    "color_hero_bg": "#121212",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo_heading": "FINEYST PATCHES",
+          "logo_tagline": "Simply apply with a Heatpress",
+          "promo_text": "Select Patches Ship as Fast as 5 Business Days. 10pc Mins with Free Shipping!",
+          "search_placeholder": "Search Patch Styles",
+          "wait_label": "Wait Time: 0 min",
+          "phone": "888-356-3665",
+          "account_cta_top": "Hello, sign in",
+          "account_cta_bottom": "Account & Reorder",
+          "menu": "main-menu",
+          "use_patch_nav": true,
+          "samples_label": "Patch Samples",
+          "samples_url": ""
+        }
+      },
+      "homehero": {
+        "type": "homehero",
+        "settings": {
+          "heading": "Premium Custom Patches with Low 10-Piece Minimums",
+          "subheading": "Heat-press application in about 20 seconds. 15+ patch styles, rush options, and no setup fees on qualifying orders.",
+          "tick_1": "Free Shipping",
+          "tick_2": "Low Minimums",
+          "tick_3": "No Setup Fees",
+          "primary_label": "Shop Custom Patches",
+          "primary_link": "",
+          "secondary_label": "Shop 5 Day Rush Patches",
+          "secondary_link": "",
+          "badge_text": "NEW! 10 PIECE MINIMUM",
+          "card_col1_title": "15+ Varieties of Patch Types",
+          "card_col1_text": "",
+          "card_col2_title": "20 Seconds Fast & Easy Application",
+          "card_col2_text": "",
+          "card_banner": "5 Day Rush Shipping Available!"
+        }
+      },
+      "patchtypes": {
+        "type": "patchtypes",
+        "settings": {
+          "heading": "Shop All Patch Types",
+          "collection": "",
+          "products_to_show": 8,
+          "min_badge": "10pc min",
+          "button_label": "Customize"
+        }
+      },
+      "popularproducts": {
+        "type": "popularproducts",
+        "settings": {
+          "heading": "Shop Other Popular Products",
+          "collection": "",
+          "products_to_show": 4,
+          "button_label": "Customize"
+        }
+      },
+      "commercialvideo": {
+        "type": "commercialvideo",
+        "settings": {
+          "video_url": "",
+          "heading": "Watch our Commercial",
+          "text": "<p>Fineyst Patches is the home of all your favorite patch types and more!<br>Let's get Patchin' Crazy!</p>"
+        }
+      },
+      "embroideryfleet": {
+        "type": "embroideryfleet",
+        "settings": {
+          "eyebrow": "We Understand Service, Quality, and Speed Matter Most",
+          "heading": "An Unrivaled Fleet of 1000+ Embroidery Heads"
+        }
+      },
+      "orderingprocess": {
+        "type": "orderingprocess",
+        "blocks": {
+          "step_NbjEdG": {
+            "type": "step",
+            "settings": {
+              "title": "Upload Your Designs & Place Your Order Online",
+              "text": "Use our online patch builder to place your order quickly and easily."
+            }
+          },
+          "step_GLmKFq": {
+            "type": "step",
+            "settings": {
+              "title": "Upload Your Designs & Place Your Order Online",
+              "text": "Use our online patch builder to place your order quickly and easily."
+            }
+          },
+          "step_7EFLid": {
+            "type": "step",
+            "settings": {
+              "title": "Upload Your Designs & Place Your Order Online",
+              "text": "Use our online patch builder to place your order quickly and easily."
+            }
+          },
+          "step_haRRVp": {
+            "type": "step",
+            "settings": {
+              "title": "Upload Your Designs & Place Your Order Online",
+              "text": "Use our online patch builder to place your order quickly and easily."
+            }
+          }
+        },
+        "block_order": [
+          "step_NbjEdG",
+          "step_GLmKFq",
+          "step_7EFLid",
+          "step_haRRVp"
+        ],
+        "settings": {
+          "heading": "The Fineyst Patch Ordering Process",
+          "subheading": "Simplifying the Process with Satisfaction Guaranteed"
+        }
+      }
+    },
+    "content_for_index": []
   }
 }
