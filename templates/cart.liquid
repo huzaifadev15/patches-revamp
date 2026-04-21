@@ -1,0 +1,67 @@
+<main class="cart-page">
+  <div class="cart-page__inner">
+    <h1 class="cart-page__title">Your Cart</h1>
+
+    {% if cart.item_count > 0 %}
+      {% form 'cart', cart %}
+        <div class="cart-page__table">
+          <div class="cart-page__head">
+            <span>Product</span>
+            <span>Qty</span>
+            <span>Total</span>
+          </div>
+
+          {% for item in cart.items %}
+            <div class="cart-page__row">
+              <div class="cart-page__product">
+                {% if item.image %}
+                  {{
+                    item.image
+                    | image_url: width: 140
+                    | image_tag: loading: 'lazy', class: 'cart-page__img', alt: item.product.title
+                  }}
+                {% endif %}
+                <div>
+                  <p class="cart-page__name">{{ item.product.title }}</p>
+                  {% if item.variant.title != 'Default Title' %}
+                    <p class="cart-page__meta">{{ item.variant.title }}</p>
+                  {% endif %}
+                  {% for p in item.properties %}
+                    {% assign key = p.first %}
+                    {% assign val = p.last %}
+                    {% if val != blank %}
+                      <p class="cart-page__meta"><strong>{{ key }}:</strong> {{ val }}</p>
+                    {% endif %}
+                  {% endfor %}
+                  <a class="cart-page__remove" href="{{ item.url_to_remove }}">Remove</a>
+                </div>
+              </div>
+              <div>
+                <input
+                  class="cart-page__qty"
+                  type="number"
+                  name="updates[]"
+                  value="{{ item.quantity }}"
+                  min="0"
+                  aria-label="Quantity for {{ item.product.title | escape }}"
+                >
+              </div>
+              <div class="cart-page__line-total">{{ item.final_line_price | money }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-page__footer">
+          <p class="cart-page__subtotal">Subtotal: <strong>{{ cart.total_price | money }}</strong></p>
+          <div class="cart-page__actions">
+            <button class="cart-page__btn cart-page__btn--muted" type="submit" name="update">Update cart</button>
+            <button class="cart-page__btn" type="submit" name="checkout">Checkout</button>
+          </div>
+        </div>
+      {% endform %}
+    {% else %}
+      <p class="cart-page__empty">Your cart is empty.</p>
+      <a class="cart-page__btn" href="{{ routes.root_url }}">Continue shopping</a>
+    {% endif %}
+  </div>
+</main>
