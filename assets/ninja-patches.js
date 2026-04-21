@@ -229,6 +229,7 @@
       var notesField = sizer.querySelector('[data-notes-field]');
       var calcUnitHidden = document.querySelector('[data-calc-unit-hidden]');
       var calcTotalHidden = document.querySelector('[data-calc-total-hidden]');
+      var calcCustomPriceHidden = document.querySelector('[data-calc-custom-price-hidden]');
       var calcQuoteTokenHidden = document.querySelector('[data-calc-quote-token-hidden]');
       var tierBody = document.querySelector('[data-tier-body]');
       var pricingUrl = sizer.getAttribute('data-pricing-url');
@@ -319,6 +320,7 @@
         if (avgEl) avgEl.textContent = ((w + h) / 2).toFixed(1) + '"';
         if (calcUnitHidden) calcUnitHidden.value = '$' + unit.toFixed(2);
         if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
+        if (calcCustomPriceHidden) calcCustomPriceHidden.value = total.toFixed(2);
         if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = '';
         renderTierTable(h, qty);
         requestQuoteFromBackend(w, h, qty);
@@ -344,6 +346,7 @@
         if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
         if (calcUnitHidden) calcUnitHidden.value = '$' + unit.toFixed(2);
         if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
+        if (calcCustomPriceHidden) calcCustomPriceHidden.value = total.toFixed(2);
         if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = quoteToken || '';
       }
 
