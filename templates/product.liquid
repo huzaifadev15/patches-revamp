@@ -1,1 +1,79 @@
-{% section 'mainproduct' %}
+<main class="product-page">
+  <div class="product-page__inner">
+    <div class="product-page__gallery">
+      <div class="product-page__main-media">
+        {% if product.featured_image %}
+          {{
+            product.featured_image
+            | image_url: width: 1200
+            | image_tag: loading: 'eager', class: 'product-page__img', widths: '600, 900, 1200', sizes: '(min-width: 990px) 42vw, 100vw', alt: product.title
+          }}
+        {% else %}
+          <div class="product-page__main-media--ph" aria-hidden="true"></div>
+        {% endif %}
+      </div>
+      {% if product.images.size > 1 %}
+        <div class="product-page__thumbs">
+          {% for image in product.images limit: 7 %}
+            <a class="product-page__thumb" href="{{ image | image_url: width: 1200 }}">
+              {{
+                image
+                | image_url: width: 220
+                | image_tag: loading: 'lazy', class: 'product-page__thumb-img', widths: '110, 165, 220', sizes: '96px', alt: product.title
+              }}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <p class="product-page__watch">Watch - Apply with a Heatpress</p>
+    </div>
+
+    <div class="product-page__info">
+      <h1 class="product-page__title">{{ product.title | escape }}</h1>
+
+      <div class="product-page__reviews">
+        <span class="product-page__stars" aria-hidden="true">★★★★★</span>
+        <span class="product-page__review-count">413 Reviews</span>
+        <a href="#reviews" class="product-page__review-link">See reviews summary</a>
+      </div>
+
+      <p class="product-page__unit-price">{{ product.price | money }} each at 100 pieces.</p>
+
+      {% if product.description != blank %}
+        <div class="product-page__desc rte">{{ product.description }}</div>
+      {% endif %}
+
+      <div class="product-page__benefits">
+        <span>10-Piece Minimum with Free Shipping</span>
+        <span>No Art or Set Up Fees</span>
+        <span>Upgrade to 5 Day Rush with 25+ pcs</span>
+      </div>
+
+      {% form 'product', product, class: 'product-page__form' %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="properties[Upload placeholder]" value="File upload handled externally">
+
+        <div class="product-page__upload-card">
+          <div class="product-page__upload-icon" aria-hidden="true">⬆</div>
+          <h3 class="product-page__upload-title">Upload your file</h3>
+          <p class="product-page__upload-text">Drag and drop file here or click to browse</p>
+          <label class="product-page__browse">
+            <input type="file" disabled>
+            Browse
+          </label>
+          <p class="product-page__upload-note">Login to see previous designs</p>
+        </div>
+
+        <div class="product-page__actions">
+          <div class="product-page__qty-wrap">
+            <label class="product-page__label" for="Quantity">Qty</label>
+            <input id="Quantity" class="product-page__qty" type="number" name="quantity" min="1" value="100">
+          </div>
+          <button type="submit" class="product-page__add">Add to cart</button>
+        </div>
+      {% endform %}
+
+      <a href="#" class="product-page__calculator">Price Calculator</a>
+    </div>
+  </div>
+</main>

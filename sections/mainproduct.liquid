@@ -1,70 +1,163 @@
 <section class="product-page section-{{ section.id }}">
   <div class="product-page__inner">
     <div class="product-page__gallery">
-      {% if product.media.size > 0 %}
-        <div class="product-page__main-media">
+      <div class="product-page__main-media">
+        {% if product.featured_image %}
           {{
-            product.featured_media
+            product.featured_image
             | image_url: width: 1200
-            | image_tag: loading: 'eager', class: 'product-page__img', widths: '600, 900, 1200', sizes: '(min-width: 990px) 48vw, 100vw', alt: product.title
+            | image_tag: loading: 'eager', class: 'product-page__img', widths: '600, 900, 1200', sizes: '(min-width: 990px) 42vw, 100vw', alt: product.title
           }}
-        </div>
+        {% else %}
+          <div class="product-page__main-media--ph" aria-hidden="true"></div>
+        {% endif %}
+      </div>
+      {% if product.images.size > 1 %}
         <div class="product-page__thumbs">
-          {% for media in product.media limit: 6 %}
-            <a class="product-page__thumb" href="{{ media | image_url: width: 1200 }}">
+          {% for image in product.images limit: 7 %}
+            <a class="product-page__thumb" href="{{ image | image_url: width: 1200 }}">
               {{
-                media
-                | image_url: width: 240
-                | image_tag: loading: 'lazy', class: 'product-page__thumb-img', widths: '120, 180, 240', sizes: '120px', alt: product.title
+                image
+                | image_url: width: 220
+                | image_tag: loading: 'lazy', class: 'product-page__thumb-img', widths: '110, 165, 220', sizes: '96px', alt: product.title
               }}
             </a>
           {% endfor %}
         </div>
-      {% else %}
-        <div class="product-page__main-media product-page__main-media--ph" aria-hidden="true"></div>
       {% endif %}
+      <p class="product-page__watch">Watch - Apply with a Heatpress</p>
     </div>
 
     <div class="product-page__info">
       <h1 class="product-page__title">{{ product.title | escape }}</h1>
-      <p class="product-page__price">
-        {% if product.compare_at_price > product.price %}
-          <span class="product-page__price-old">{{ product.compare_at_price | money }}</span>
-        {% endif %}
-        <span class="product-page__price-current">{{ product.price | money }}</span>
-      </p>
+
+      <div class="product-page__reviews">
+        <span class="product-page__stars" aria-hidden="true">★★★★★</span>
+        <span class="product-page__review-count">413 Reviews</span>
+        <a href="#reviews" class="product-page__review-link">See reviews summary</a>
+      </div>
+
+      <p class="product-page__unit-price">{{ product.price | money }} each at 100 pieces.</p>
 
       {% if product.description != blank %}
         <div class="product-page__desc rte">{{ product.description }}</div>
       {% endif %}
 
-      {% form 'product', product, class: 'product-page__form' %}
-        {% unless product.has_only_default_variant %}
-          <label class="product-page__label" for="VariantSelect">Select option</label>
-          <select id="VariantSelect" name="id" class="product-page__select">
-            {% for variant in product.variants %}
-              <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
-                {{ variant.title }}{% unless variant.available %} - Sold out{% endunless %}
-              </option>
-            {% endfor %}
-          </select>
-        {% else %}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        {% endunless %}
+      <div class="product-page__benefits">
+        <span>10-Piece Minimum with Free Shipping</span>
+        <span>No Art or Set Up Fees</span>
+        <span>Upgrade to 5 Day Rush with 25+ pcs</span>
+      </div>
 
-        <div class="product-page__qty-wrap">
-          <label class="product-page__label" for="Quantity">Quantity</label>
-          <input id="Quantity" class="product-page__qty" type="number" name="quantity" min="1" value="1">
+      {% form 'product', product, class: 'product-page__form' %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+        <div class="product-page__upload-card" data-upload-dropzone>
+          <div class="product-page__upload-icon" aria-hidden="true">⬆</div>
+          <h3 class="product-page__upload-title">Upload your file</h3>
+          <p class="product-page__upload-text">Drag and drop file here or click to browse</p>
+          <label class="product-page__browse">
+            <input
+              type="file"
+              name="properties[Artwork file]"
+              accept=".ai,.eps,.pdf,.png,.jpg,.jpeg,.svg,.psd"
+              data-upload-input
+            >
+            Browse
+          </label>
+          <p class="product-page__upload-file" data-upload-filename>No file selected</p>
+          <p class="product-page__upload-note">Login to see previous designs</p>
+        </div>
+        <div class="product-page__progress" data-upload-progress hidden>
+          <div class="product-page__progress-character" aria-hidden="true">
+            <span class="product-page__ninja-head"></span>
+            <span class="product-page__ninja-body"></span>
+            <span class="product-page__ninja-arm product-page__ninja-arm--left"></span>
+            <span class="product-page__ninja-arm product-page__ninja-arm--right"></span>
+            <span class="product-page__ninja-leg product-page__ninja-leg--left"></span>
+            <span class="product-page__ninja-leg product-page__ninja-leg--right"></span>
+            <span class="product-page__ninja-sword"></span>
+          </div>
+          <p class="product-page__progress-percent" data-upload-percent>0%</p>
+          <div class="product-page__progress-track" aria-hidden="true">
+            <div class="product-page__progress-fill" data-upload-fill></div>
+          </div>
+          <p class="product-page__progress-text">We're making sure your image is perfect for patches. This may take a few seconds.</p>
+          <button type="button" class="product-page__progress-stop" data-upload-stop>Stop</button>
+        </div>
+        <div class="product-page__artwork-review" data-upload-review hidden>
+          <div class="product-page__artwork-preview-col">
+            <p class="product-page__artwork-top">Hover to Zoom | <span>Click</span> to enlarge</p>
+            <p class="product-page__artwork-note">Preview: Design may exceed embroidery detail limits. We may upgrade to Print + Stitch for best results.</p>
+            <div class="product-page__artwork-zoom-wrap" data-upload-zoom-wrap>
+              <div class="product-page__zoom-pane" data-upload-zoom-pane aria-hidden="true"></div>
+              <div class="product-page__artwork-frame" data-upload-zoom-frame>
+                <img src="" alt="Uploaded design preview" class="product-page__artwork-img" data-upload-preview-image>
+              </div>
+            </div>
+            <div class="product-page__artwork-tools">
+              <button type="button">Crop &amp; Trim</button>
+              <button type="button">Remove Background</button>
+              <button type="button">Edit with AI</button>
+            </div>
+          </div>
+          <div class="product-page__tier-col">
+            <h3>Buy More. Save More.</h3>
+            <table class="product-page__tier-table" aria-label="Quantity discount table">
+              <thead>
+                <tr>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Qty Discount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="is-active">
+                  <td>10-24 pcs</td>
+                  <td>$6.71 ea</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>25-49</td>
+                  <td>$5.03 ea</td>
+                  <td class="is-green">25% off</td>
+                </tr>
+                <tr>
+                  <td>50-99</td>
+                  <td>$4.36 ea</td>
+                  <td class="is-green">35% off</td>
+                </tr>
+                <tr>
+                  <td>100-199</td>
+                  <td>$3.35 ea</td>
+                  <td class="is-green">50% off</td>
+                </tr>
+                <tr>
+                  <td>200-499</td>
+                  <td>$2.35 ea</td>
+                  <td class="is-green">65% off</td>
+                </tr>
+                <tr>
+                  <td>500+</td>
+                  <td>$1.68 ea</td>
+                  <td class="is-green">75% off</td>
+                </tr>
+              </tbody>
+            </table>
+            <button type="button" class="product-page__change-file" data-upload-change>Change uploaded file</button>
+          </div>
         </div>
 
-        <button type="submit" name="add" class="product-page__add" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-          {% if product.selected_or_first_available_variant.available %}
-            Add to cart
-          {% else %}
-            Sold out
-          {% endif %}
-        </button>
+        <div class="product-page__actions">
+          <div class="product-page__qty-wrap">
+            <label class="product-page__label" for="Quantity">Qty</label>
+            <input id="Quantity" class="product-page__qty" type="number" name="quantity" min="1" value="100">
+          </div>
+          <button type="submit" class="product-page__add">Add to cart</button>
+        </div>
       {% endform %}
+
+      <a href="#" class="product-page__calculator">Price Calculator</a>
     </div>
   </div>
 </section>

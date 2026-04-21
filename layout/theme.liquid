@@ -43,7 +43,11 @@
     {% section 'header' %}
 
     <main id="MainContent" class="main-content" role="main" tabindex="-1">
-      {{ content_for_layout }}
+      {% if request.page_type == 'product' %}
+        {% section 'mainproduct' %}
+      {% else %}
+        {{ content_for_layout }}
+      {% endif %}
     </main>
 
     <div class="chat-fab" aria-hidden="true">
