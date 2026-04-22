@@ -320,7 +320,7 @@
         if (avgEl) avgEl.textContent = ((w + h) / 2).toFixed(1) + '"';
         if (calcUnitHidden) calcUnitHidden.value = '$' + unit.toFixed(2);
         if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
-        if (calcCustomPriceHidden) calcCustomPriceHidden.value = total.toFixed(2);
+        if (calcCustomPriceHidden) calcCustomPriceHidden.value = unit.toFixed(2);
         if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = '';
         renderTierTable(h, qty);
         requestQuoteFromBackend(w, h, qty);
@@ -346,7 +346,7 @@
         if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
         if (calcUnitHidden) calcUnitHidden.value = '$' + unit.toFixed(2);
         if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
-        if (calcCustomPriceHidden) calcCustomPriceHidden.value = total.toFixed(2);
+        if (calcCustomPriceHidden) calcCustomPriceHidden.value = unit.toFixed(2);
         if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = quoteToken || '';
       }
 
