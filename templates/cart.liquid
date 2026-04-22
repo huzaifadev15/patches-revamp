@@ -23,7 +23,11 @@
               {% endif %}
             {% endfor %}
             {% assign displayed_subtotal_cents = displayed_subtotal_cents | plus: displayed_total_cents %}
-            <div class="cart-page__row">
+            <div
+              class="cart-page__row"
+              data-cart-line="{{ forloop.index }}"
+              data-cart-product-name="{{ item.product.title | escape }}"
+            >
               <div class="cart-page__product">
                 {% if item.image %}
                   {{
@@ -41,7 +45,16 @@
                     {% assign key = p.first %}
                     {% assign val = p.last %}
                     {% if val != blank %}
-                      <p class="cart-page__meta"><strong>{{ key }}:</strong> {{ val }}</p>
+                      <input
+                        type="hidden"
+                        data-cart-prop
+                        data-cart-prop-key="{{ key | escape }}"
+                        data-cart-prop-value="{{ val | escape }}"
+                      >
+                      <p class="cart-page__meta">
+                        <strong>{{ key }}:</strong>
+                        <span data-cart-prop-display data-cart-prop-display-key="{{ key | escape }}">{{ val }}</span>
+                      </p>
                     {% endif %}
                   {% endfor %}
                   <button
@@ -64,13 +77,13 @@
                   aria-label="Quantity for {{ item.product.title | escape }}"
                 >
               </div>
-              <div class="cart-page__line-total">{{ displayed_total }}</div>
+              <div class="cart-page__line-total" data-cart-line-total>{{ displayed_total }}</div>
             </div>
           {% endfor %}
         </div>
 
         <div class="cart-page__footer">
-          <p class="cart-page__subtotal">Subtotal: <strong>{{ displayed_subtotal_cents | money }}</strong></p>
+          <p class="cart-page__subtotal">Subtotal: <strong data-cart-subtotal>{{ displayed_subtotal_cents | money }}</strong></p>
           <div class="cart-page__actions">
             <button class="cart-page__btn cart-page__btn--muted" type="submit" name="update">Update cart</button>
             <button class="cart-page__btn" type="submit" name="checkout">Checkout</button>
@@ -83,3 +96,394 @@
     {% endif %}
   </div>
 </main>
+
+<script>
+  (function () {
+    var cartForm = document.querySelector('form[action*="/cart"]');
+    if (!cartForm) return;
+
+    var rows = Array.prototype.slice.call(document.querySelectorAll('[data-cart-line]'));
+    if (!rows.length) return;
+
+    function clampQty(v) {
+      var n = parseInt(v || '0', 10);
+      if (isNaN(n) || n < 0) n = 0;
+      return n;
+    }
+
+    function normalize(name) {
+      return (name || '')
+        .toLowerCase()
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    }
+
+    function includesWords(haystack, needle) {
+      var h = normalize(haystack);
+      var n = normalize(needle);
+      if (!h || !n) return false;
+      return h.indexOf(n) !== -1;
+    }
+
+    function formatMoney(value) {
+      return '$' + value.toFixed(2);
+    }
+
+    function parseMoney(value) {
+      var n = parseFloat(String(value || '').replace(/[^0-9.-]/g, ''));
+      return isNaN(n) ? 0 : n;
+    }
+
+    async function fetchWithTimeout(url, options, timeoutMs) {
+      var controller = new AbortController();
+      var timer = setTimeout(function () {
+        controller.abort();
+      }, timeoutMs || 8000);
+      try {
+        var req = options || {};
+        req.signal = controller.signal;
+        return await fetch(url, req);
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function selectClosestSize(sizes, heightValue) {
+      if (!sizes.length) return null;
+      var best = sizes[0];
+      var bestDiff = Math.abs(best - heightValue);
+      for (var i = 1; i < sizes.length; i++) {
+        var diff = Math.abs(sizes[i] - heightValue);
+        if (diff < bestDiff) {
+          best = sizes[i];
+          bestDiff = diff;
+        }
+      }
+      return best;
+    }
+
+    function getRowsForProduct(allRows, productName) {
+      var aliases = [
+        '3D Embroidered patch',
+        '3D Embroidered',
+        'Embroidered & 3D Embroidered',
+        productName
+      ].filter(Boolean);
+
+      var matches = [];
+      for (var a = 0; a < aliases.length; a++) {
+        var alias = aliases[a];
+        matches = (allRows || []).filter(function (row) {
+          return normalize(row.name) === normalize(alias);
+        });
+        if (matches.length > 0) break;
+      }
+
+      if (matches.length === 0) {
+        matches = (allRows || []).filter(function (row) {
+          return includesWords(row.name, '3D Embroidered') || includesWords(row.name, productName);
+        });
+      }
+
+      return matches;
+    }
+
+    function getClosestSizeRows(rows, heightValue) {
+      var sizeRows = (rows || []).filter(function (row) {
+        return typeof row.size === 'number' && typeof row.quantity === 'number';
+      });
+      if (!sizeRows.length) return [];
+
+      var uniqueSizes = [];
+      sizeRows.forEach(function (row) {
+        if (uniqueSizes.indexOf(row.size) === -1) uniqueSizes.push(row.size);
+      });
+
+      var closestSize = selectClosestSize(uniqueSizes, heightValue);
+      if (closestSize === null) return [];
+
+      return sizeRows
+        .filter(function (row) {
+          return row.size === closestSize;
+        })
+        .sort(function (a, b) {
+          return a.quantity - b.quantity;
+        });
+    }
+
+    function calcUnitPrice(rows, qty, heightValue) {
+      var basePrice = 6.71;
+      var sizeRows = getClosestSizeRows(rows, heightValue);
+      if (sizeRows.length > 0) {
+        var selected = sizeRows[0];
+        for (var i = 0; i < sizeRows.length; i++) {
+          if (qty >= sizeRows[i].quantity) selected = sizeRows[i];
+        }
+        var parsed = parseFloat(selected.price);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+      if (qty >= 500) return 1.68;
+      if (qty >= 200) return 2.35;
+      if (qty >= 100) return 3.35;
+      if (qty >= 50) return 4.36;
+      if (qty >= 25) return 5.03;
+      return basePrice;
+    }
+
+    function getCurrentProperties(row) {
+      var properties = {};
+      row.querySelectorAll('[data-cart-prop]').forEach(function (input) {
+        var key = input.getAttribute('data-cart-prop-key');
+        var value = input.getAttribute('data-cart-prop-value');
+        if (key && value !== null && value !== '') properties[key] = value;
+      });
+      return properties;
+    }
+
+    function setMetaValue(row, key, value) {
+      var existing = row.querySelectorAll('[data-cart-prop]');
+      for (var i = 0; i < existing.length; i++) {
+        if (existing[i].getAttribute('data-cart-prop-key') === key) {
+          existing[i].setAttribute('data-cart-prop-value', value);
+          return;
+        }
+      }
+      var hidden = document.createElement('input');
+      hidden.type = 'hidden';
+      hidden.setAttribute('data-cart-prop', '');
+      hidden.setAttribute('data-cart-prop-key', key);
+      hidden.setAttribute('data-cart-prop-value', value);
+      row.appendChild(hidden);
+    }
+
+    function setMetaDisplayValue(row, key, value) {
+      var displays = row.querySelectorAll('[data-cart-prop-display]');
+      for (var i = 0; i < displays.length; i++) {
+        if (displays[i].getAttribute('data-cart-prop-display-key') === key) {
+          displays[i].textContent = value;
+          return;
+        }
+      }
+    }
+
+    function setBusy(input, busy) {
+      if (!input) return;
+      input.disabled = !!busy;
+      input.style.opacity = busy ? '0.7' : '';
+    }
+
+    function recalcSubtotalUi() {
+      var subtotalEl = document.querySelector('[data-cart-subtotal]');
+      if (!subtotalEl) return;
+      var sum = 0;
+      document.querySelectorAll('[data-cart-line-total]').forEach(function (el) {
+        sum += parseMoney(el.textContent);
+      });
+      subtotalEl.textContent = formatMoney(sum);
+    }
+
+    var pricingRowsCache = null;
+    var pricingRowsPromise = null;
+    function getPricingRows() {
+      if (pricingRowsCache) return Promise.resolve(pricingRowsCache);
+      if (pricingRowsPromise) return pricingRowsPromise;
+      pricingRowsPromise = fetchWithTimeout('{{ "pricing.json" | asset_url }}', {}, 8000)
+        .then(function (res) {
+          if (!res.ok) throw new Error('pricing request failed');
+          return res.json();
+        })
+        .then(function (rows) {
+          pricingRowsCache = rows || [];
+          return pricingRowsCache;
+        })
+        .catch(function () {
+          pricingRowsCache = [];
+          return pricingRowsCache;
+        });
+      return pricingRowsPromise;
+    }
+
+    async function updateCartLine(line, qty, properties) {
+      var res = await fetchWithTimeout('/cart/change.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          line: line,
+          quantity: qty,
+          properties: properties
+        })
+      }, 10000);
+      if (!res.ok) throw new Error('cart change failed');
+      return res.json();
+    }
+
+    async function requestQuote(row, qty, properties, fallbackUnit, fallbackTotal) {
+      var quoteUrl = (properties['Quote API URL'] || '').trim();
+      if (!quoteUrl) {
+        return {
+          unit: fallbackUnit,
+          total: fallbackTotal,
+          quoteToken: ''
+        };
+      }
+
+      var productName = row.getAttribute('data-cart-product-name') || '';
+      var width = parseFloat(properties['Patch Width (in)'] || '2');
+      var height = parseFloat(properties['Patch Height (in)'] || '2.19');
+      if (isNaN(width) || width < 1) width = 2;
+      if (isNaN(height) || height < 1) height = 2.19;
+
+      var options = {
+        shape: properties.Shape || '',
+        border: properties['Border Style'] || '',
+        backing: properties.Backing || '',
+        backgroundColor: properties['Patch Background Color'] || '',
+        borderThreadColor: properties['Border Thread Color'] || ''
+      };
+
+      try {
+        var res = await fetchWithTimeout(quoteUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productName: productName,
+            width: width,
+            height: height,
+            qty: qty,
+            options: options
+          })
+        }, 8000);
+        if (!res.ok) throw new Error('quote request failed');
+        var data = await res.json();
+        if (!data || data.ok !== true) throw new Error('quote response invalid');
+        var apiUnit = parseFloat(data.unitPrice);
+        var apiTotal = parseFloat(data.total);
+        if (isNaN(apiUnit) || isNaN(apiTotal)) throw new Error('quote pricing invalid');
+        return {
+          unit: apiUnit,
+          total: apiTotal,
+          quoteToken: data.quoteToken || ''
+        };
+      } catch (e) {
+        return {
+          unit: fallbackUnit,
+          total: fallbackTotal,
+          quoteToken: ''
+        };
+      }
+    }
+
+    var rowSyncHandlers = [];
+
+    rows.forEach(function (row) {
+      var qtyInput = row.querySelector('input[name="updates[]"]');
+      if (!qtyInput) return;
+
+      var timer = null;
+      var requestId = 0;
+      var lastSyncedQty = clampQty(qtyInput.value);
+
+      async function syncRow(force) {
+        requestId += 1;
+        var currentRequest = requestId;
+
+        setBusy(qtyInput, true);
+        try {
+          var line = parseInt(row.getAttribute('data-cart-line') || '0', 10);
+          if (!line) return;
+
+          var qty = clampQty(qtyInput.value);
+          qtyInput.value = qty;
+          if (!force && qty === lastSyncedQty) return;
+
+          var properties = getCurrentProperties(row);
+          var productName = row.getAttribute('data-cart-product-name') || '';
+
+          var pricingRows = await getPricingRows();
+          var productRows = getRowsForProduct(pricingRows, productName);
+          var patchHeight = parseFloat(properties['Patch Height (in)'] || '2.19');
+          if (isNaN(patchHeight) || patchHeight < 1) patchHeight = 2.19;
+
+          var fallbackUnit = calcUnitPrice(productRows, qty, patchHeight);
+          var fallbackTotal = fallbackUnit * qty;
+          var quote = await requestQuote(row, qty, properties, fallbackUnit, fallbackTotal);
+
+          properties['Calculated Unit Price'] = formatMoney(quote.unit);
+          properties['Calculated Total'] = formatMoney(quote.total);
+          properties.custom_price = quote.unit.toFixed(2);
+          properties['Quote Token'] = quote.quoteToken || '';
+
+          var lineTotalEl = row.querySelector('[data-cart-line-total]');
+          if (lineTotalEl) lineTotalEl.textContent = formatMoney(quote.total);
+          recalcSubtotalUi();
+
+          await updateCartLine(line, qty, properties);
+          if (currentRequest !== requestId) return;
+          lastSyncedQty = qty;
+          setMetaValue(row, 'Calculated Unit Price', formatMoney(quote.unit));
+          setMetaValue(row, 'Calculated Total', formatMoney(quote.total));
+          setMetaValue(row, 'custom_price', quote.unit.toFixed(2));
+          setMetaValue(row, 'Quote Token', quote.quoteToken || '');
+          setMetaDisplayValue(row, 'Calculated Unit Price', formatMoney(quote.unit));
+          setMetaDisplayValue(row, 'Calculated Total', formatMoney(quote.total));
+          setMetaDisplayValue(row, 'custom_price', quote.unit.toFixed(2));
+          setMetaDisplayValue(row, 'Quote Token', quote.quoteToken || '');
+          if (qty === 0) window.location.reload();
+        } catch (e) {
+          window.location.reload();
+        } finally {
+          setBusy(qtyInput, false);
+        }
+      }
+
+      function queueSync() {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(function () {
+          syncRow(false);
+        }, 2000);
+      }
+
+      async function flushSyncNow() {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        await syncRow(true);
+      }
+
+      rowSyncHandlers.push(flushSyncNow);
+      qtyInput.addEventListener('input', queueSync);
+      qtyInput.addEventListener('change', queueSync);
+      qtyInput.addEventListener('blur', queueSync);
+      qtyInput.addEventListener('keyup', queueSync);
+    });
+
+    cartForm.addEventListener('submit', async function (event) {
+      var submitter = event.submitter;
+      if (!submitter) return;
+      if (submitter.name !== 'update' && submitter.name !== 'checkout') return;
+
+      event.preventDefault();
+      submitter.disabled = true;
+      try {
+        for (var i = 0; i < rowSyncHandlers.length; i++) {
+          await rowSyncHandlers[i]();
+        }
+      } catch (e) {
+        // If sync fails, keep existing fallback behavior.
+      } finally {
+        submitter.disabled = false;
+      }
+
+      if (submitter.name === 'checkout') {
+        window.location.href = '/checkout';
+        return;
+      }
+      window.location.href = '/cart';
+    });
+  })();
+</script>
