@@ -1,0 +1,100 @@
+<section class="why-buy section-{{ section.id }}">
+  <div class="why-buy__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="why-buy__heading">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="why-buy__subheading">{{ section.settings.subheading | escape }}</p>
+    {% endif %}
+
+    <div class="why-buy__grid">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <article class="why-buy__item" {{ block.shopify_attributes }}>
+            <span class="why-buy__icon" aria-hidden="true">{{ block.settings.icon | escape }}</span>
+            <div class="why-buy__content">
+              <h3 class="why-buy__item-title">{{ block.settings.title | escape }}</h3>
+              <p class="why-buy__item-text">{{ block.settings.text | escape }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        {% assign fallback_titles = '5 Day Production, Low Minimums|High Quality Materials|Versatile Attachment Options|No Setup or Art Fees|Bulk Order Discounts|Satisfaction Guarantee' | split: '|' %}
+        {% assign fallback_texts = 'Our NinjaFast option produces patches in five days, with low minimums starting at just 10 patches.|Our patches use premium threads and durable fabrics for sharp, vibrant designs that endure daily wear and washing.|We offer various backing options, including heat press, iron-on, peel-and-stick, and Velcro, to suit your needs.|To keep patches affordable, there are no setup or art fees.|Save up to 74% on larger orders; the more you buy, the more you save.|Report production errors within 45 days for replacement or refund review.' | split: '|' %}
+        {% assign fallback_icons = '⏱|🧵|🎛|💲|%|👍' | split: '|' %}
+        {% for title in fallback_titles %}
+          <article class="why-buy__item">
+            <span class="why-buy__icon" aria-hidden="true">{{ fallback_icons[forloop.index0] }}</span>
+            <div class="why-buy__content">
+              <h3 class="why-buy__item-title">{{ title }}</h3>
+              <p class="why-buy__item-text">{{ fallback_texts[forloop.index0] }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Why buy from ninja",
+  "tag": "section",
+  "class": "section-why-buy",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Buy From Ninja Patches?"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "At Ninja Patches, we are proud of the service we provide and the quality of our embroidered patches and other products. These are many reasons why you should choose us for your custom patches."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Reason",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon character",
+          "default": "✓"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "High Quality Materials"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Our patches feature premium threads and durable fabrics for sharp, vibrant designs."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Why buy from ninja",
+      "blocks": [
+        { "type": "point", "settings": { "icon": "⏱", "title": "5 Day Production, Low Minimums", "text": "Our NinjaFast option produces patches in five days, with low minimums starting at just 10 patches." } },
+        { "type": "point", "settings": { "icon": "🧵", "title": "High Quality Materials", "text": "Our patches feature premium threads and durable fabrics for sharp, vibrant designs that endure daily wear and washing." } },
+        { "type": "point", "settings": { "icon": "🎛", "title": "Versatile Attachment Options", "text": "We offer various backing options, including heat press, iron-on, peel-and-stick, and Velcro, to suit your application needs." } },
+        { "type": "point", "settings": { "icon": "💲", "title": "No Setup or Art Fees", "text": "To keep custom embroidered patches as affordable as possible, there are no setup or art fees." } },
+        { "type": "point", "settings": { "icon": "%", "title": "Bulk Order Discounts", "text": "Save up to 74% on bulk orders of custom patches; the more you buy with us, the more you save." } },
+        { "type": "point", "settings": { "icon": "👍", "title": "Satisfaction Guarantee", "text": "Report production errors within 45 days for a replacement or refund review." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

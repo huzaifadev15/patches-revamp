@@ -4,11 +4,20 @@
   var openBtn = document.querySelector('[data-mobile-open]');
   var closeBtn = document.querySelector('[data-mobile-close]');
   var panel = document.querySelector('[data-mobile-panel]');
+  var utilityHidden = false;
 
   function onScroll() {
     if (!utility) return;
     var y = window.scrollY || window.pageYOffset;
-    root.classList.toggle('header-utility-hidden', y > 36);
+    // Use separate hide/show thresholds to prevent rapid toggle loops
+    // when header height changes alter scroll position near a single cutoff.
+    if (!utilityHidden && y > 72) {
+      utilityHidden = true;
+      root.classList.add('header-utility-hidden');
+    } else if (utilityHidden && y < 24) {
+      utilityHidden = false;
+      root.classList.remove('header-utility-hidden');
+    }
   }
 
   window.addEventListener(

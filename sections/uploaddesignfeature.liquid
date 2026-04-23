@@ -1,0 +1,75 @@
+<section class="upload-design-feature section-{{ section.id }}">
+  <div class="upload-design-feature__inner">
+    <div class="upload-design-feature__content">
+      {% if section.settings.heading != blank %}
+        <h2 class="upload-design-feature__heading">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+      {% if section.settings.body != blank %}
+        <div class="upload-design-feature__body rte">{{ section.settings.body }}</div>
+      {% endif %}
+    </div>
+
+    <div class="upload-design-feature__media-col">
+      <div class="upload-design-feature__card">
+        <div class="upload-design-feature__badges" aria-hidden="true">
+          <span>{{ section.settings.left_badge | escape }}</span>
+          <span>{{ section.settings.right_badge | escape }}</span>
+        </div>
+        <div class="upload-design-feature__split" aria-hidden="true"></div>
+        {% if section.settings.image != blank %}
+          {{
+            section.settings.image
+            | image_url: width: 900
+            | image_tag: loading: 'lazy', class: 'upload-design-feature__img', widths: '420, 650, 900', sizes: '(min-width: 990px) 34vw, 92vw', alt: section.settings.heading
+          }}
+        {% else %}
+          <div class="upload-design-feature__ph" aria-hidden="true"></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Upload design feature",
+  "tag": "section",
+  "class": "section-upload-design-feature",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You Upload Your Design We Turn it into an Embroidered Patch"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Once you upload your design, our expert team digitizes it using state-of-the-art embroidery software to ensure every stitch is clean, precise, and production-ready. You will have the option to review a proof before we move forward, so you know exactly how your patch will look before it is made.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Feature image"
+    },
+    {
+      "type": "text",
+      "id": "left_badge",
+      "label": "Left badge text",
+      "default": "Your Design"
+    },
+    {
+      "type": "text",
+      "id": "right_badge",
+      "label": "Right badge text",
+      "default": "Your Patch"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Upload design feature"
+    }
+  ]
+}
+{% endschema %}

@@ -19,20 +19,28 @@
       </div>
 
       <div class="embroidery-gallery__thumbs">
-        {% for block in section.blocks %}
-          <div class="embroidery-gallery__thumb" {{ block.shopify_attributes }}>
-            {% if block.settings.image != blank %}
-              {% assign thumb_alt = block.settings.image.alt | default: section.settings.heading %}
-              {{
-                block.settings.image
-                | image_url: width: 520
-                | image_tag: loading: 'lazy', class: 'embroidery-gallery__img', widths: '260, 380, 520', sizes: '(min-width: 990px) 19vw, 50vw', alt: thumb_alt
-              }}
-            {% else %}
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+            <div class="embroidery-gallery__thumb" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                {% assign thumb_alt = block.settings.image.alt | default: section.settings.heading %}
+                {{
+                  block.settings.image
+                  | image_url: width: 520
+                  | image_tag: loading: 'lazy', class: 'embroidery-gallery__img', widths: '260, 380, 520', sizes: '(min-width: 990px) 19vw, 50vw', alt: thumb_alt
+                }}
+              {% else %}
+                <div class="embroidery-gallery__ph" aria-hidden="true"></div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          {% for i in (1..6) %}
+            <div class="embroidery-gallery__thumb">
               <div class="embroidery-gallery__ph" aria-hidden="true"></div>
-            {% endif %}
-          </div>
-        {% endfor %}
+            </div>
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   </div>

@@ -45,6 +45,8 @@
     <main id="MainContent" class="main-content" role="main" tabindex="-1">
       {% if request.page_type == 'product' %}
         {% section 'mainproduct' %}
+        {% section 'productdetailsinfo' %}
+        {% section 'uploaddesignfeature' %}
       {% else %}
         {{ content_for_layout }}
       {% endif %}
