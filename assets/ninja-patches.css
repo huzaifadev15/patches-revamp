@@ -1774,6 +1774,17 @@ body.mobile-nav-open {
   margin-left: 1.85rem;
 }
 
+.product-page__artwork-frame.is-transparent-bg {
+  background-color: #f7f7f7;
+  background-image:
+    linear-gradient(45deg, #d9d9d9 25%, transparent 25%),
+    linear-gradient(-45deg, #d9d9d9 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #d9d9d9 75%),
+    linear-gradient(-45deg, transparent 75%, #d9d9d9 75%);
+  background-size: 14px 14px;
+  background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+}
+
 .product-page__artwork-img {
   width: 100%;
   height: 100%;
@@ -1882,6 +1893,48 @@ body.mobile-nav-open {
   background: #f5f5f5;
   font-size: 0.74rem;
   cursor: pointer;
+}
+
+.product-page__toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.product-page__toggle-switch {
+  width: 28px;
+  height: 16px;
+  border-radius: 999px;
+  background: #9f9f9f;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.product-page__toggle-switch::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  left: 2px;
+  top: 2px;
+  transition: transform 0.2s ease;
+}
+
+.product-page__toggle-btn[aria-pressed="true"] .product-page__toggle-switch {
+  background: #46bd62;
+}
+
+.product-page__toggle-btn[aria-pressed="true"] .product-page__toggle-switch::after {
+  transform: translateX(12px);
+}
+
+.product-page__artwork-tools button[data-upload-delete] {
+  border-color: #e7b0b0;
+  color: #b52d2d;
+  background: #fff6f6;
 }
 
 .product-page__tier-col h3 {
@@ -2146,13 +2199,10 @@ body.mobile-nav-open {
 
 .product-page__checkout-wrap {
   margin-top: 1rem;
-  position: sticky;
-  bottom: 0;
-  z-index: 25;
-  background: rgba(255, 255, 255, 0.96);
-  padding: 0.65rem 0 0.2rem;
-  border-top: 1px solid #e6e6e6;
-  backdrop-filter: blur(3px);
+  position: static;
+  background: transparent;
+  padding: 0;
+  border-top: 0;
 }
 
 .product-page__checkout-wrap[hidden] {

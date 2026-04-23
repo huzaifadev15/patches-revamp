@@ -150,9 +150,17 @@
               </div>
             </div>
             <div class="product-page__artwork-tools">
-              <button type="button">Crop &amp; Trim</button>
-              <button type="button">Remove Background</button>
-              <button type="button">Edit with AI</button>
+              <button type="button" data-upload-crop>Crop &amp; Trim</button>
+              <button
+                type="button"
+                class="product-page__toggle-btn"
+                data-upload-remove-bg
+                aria-pressed="false"
+              >
+                <span>Remove Background</span>
+                <span class="product-page__toggle-switch" aria-hidden="true"></span>
+              </button>
+              <button type="button" data-upload-delete>Delete image</button>
             </div>
           </div>
           <div class="product-page__tier-col">

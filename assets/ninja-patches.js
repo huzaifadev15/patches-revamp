@@ -61,6 +61,9 @@
     var reviewImage = document.querySelector('[data-upload-preview-image]');
     var dimWidthLabel = document.querySelector('[data-upload-dim-width]');
     var dimHeightLabel = document.querySelector('[data-upload-dim-height]');
+    var cropBtn = document.querySelector('[data-upload-crop]');
+    var removeBgBtn = document.querySelector('[data-upload-remove-bg]');
+    var deleteImageBtn = document.querySelector('[data-upload-delete]');
     var changeFile = document.querySelector('[data-upload-change]');
     var patchSizer = document.querySelector('[data-patch-sizer]');
     var checkoutWrap = document.querySelector('[data-checkout-wrap]');
@@ -73,6 +76,8 @@
     var progressValue = 0;
     var previewUrl = '';
     var autoSizeFromImage = null;
+    var removeBgEnabled = false;
+    var baseImageSrc = '';
 
     function renderProgress() {
       if (!progressFill || !progressPercent) return;
@@ -90,8 +95,17 @@
 
     function clearPreviewUrl() {
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+        if (previewUrl !== baseImageSrc) {
+          URL.revokeObjectURL(previewUrl);
+        }
         previewUrl = '';
+      }
+    }
+
+    function clearBaseImageSrc() {
+      if (baseImageSrc) {
+        URL.revokeObjectURL(baseImageSrc);
+        baseImageSrc = '';
       }
     }
 
@@ -105,7 +119,11 @@
       progressValue = 0;
       renderProgress();
       clearPreviewUrl();
+      clearBaseImageSrc();
       if (reviewImage) reviewImage.removeAttribute('src');
+      removeBgEnabled = false;
+      if (removeBgBtn) removeBgBtn.setAttribute('aria-pressed', 'false');
+      if (zoomFrame) zoomFrame.classList.remove('is-transparent-bg');
       if (dimWidthLabel) dimWidthLabel.textContent = '2.00"';
       if (dimHeightLabel) dimHeightLabel.textContent = '2.19"';
       if (zoomPane) zoomPane.style.backgroundImage = '';
@@ -144,6 +162,7 @@
       if (input.files && input.files.length > 0) {
         if (reviewImage) {
           clearPreviewUrl();
+          clearBaseImageSrc();
           previewUrl = URL.createObjectURL(input.files[0]);
           reviewImage.onload = function () {
             if (
@@ -155,6 +174,10 @@
             }
           };
           reviewImage.src = previewUrl;
+          baseImageSrc = previewUrl;
+          removeBgEnabled = false;
+          if (removeBgBtn) removeBgBtn.setAttribute('aria-pressed', 'false');
+          if (zoomFrame) zoomFrame.classList.remove('is-transparent-bg');
           if (zoomPane) zoomPane.style.backgroundImage = 'url("' + previewUrl + '")';
         }
         if (reviewBox) reviewBox.hidden = true;
@@ -165,6 +188,273 @@
         resetUploadUi();
         stopProgress(true);
       }
+    }
+
+    function updateInputFileFromBlob(blob, filenameBase) {
+      if (!blob || !window.DataTransfer) return;
+      var safeName = (filenameBase || 'design').replace(/\.[^.]+$/, '');
+      var file = new File([blob], safeName + '.png', { type: 'image/png' });
+      var dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      filename.textContent = file.name;
+    }
+
+    function showProcessedPreview(blob, filenameBase) {
+      if (!blob || !reviewImage) return;
+      stopProgress(true);
+      dropzone.hidden = true;
+      if (reviewBox) reviewBox.hidden = false;
+      if (patchSizer) patchSizer.hidden = false;
+      if (checkoutWrap) checkoutWrap.hidden = false;
+      clearPreviewUrl();
+      clearBaseImageSrc();
+      previewUrl = URL.createObjectURL(blob);
+      reviewImage.onload = function () {
+        if (
+          typeof autoSizeFromImage === 'function' &&
+          reviewImage.naturalWidth > 0 &&
+          reviewImage.naturalHeight > 0
+        ) {
+          autoSizeFromImage(reviewImage.naturalWidth, reviewImage.naturalHeight);
+        }
+      };
+      reviewImage.src = previewUrl;
+      baseImageSrc = previewUrl;
+      removeBgEnabled = false;
+      if (removeBgBtn) removeBgBtn.setAttribute('aria-pressed', 'false');
+      if (zoomFrame) zoomFrame.classList.remove('is-transparent-bg');
+      if (zoomPane) zoomPane.style.backgroundImage = 'url("' + previewUrl + '")';
+      updateInputFileFromBlob(blob, filenameBase);
+    }
+
+    function loadPreviewImage(onReady) {
+      if (!reviewImage || !reviewImage.src) return;
+      var img = new Image();
+      img.onload = function () {
+        onReady(img);
+      };
+      img.src = reviewImage.src;
+    }
+
+    function canvasToBlob(canvas, callback) {
+      if (!canvas) return;
+      canvas.toBlob(
+        function (blob) {
+          if (blob) callback(blob);
+        },
+        'image/png',
+        0.95
+      );
+    }
+
+    function applyCropAndTrim() {
+      if (!reviewImage || !reviewImage.src) return;
+      var trimPercent = parseFloat(
+        window.prompt('Trim % from each edge (0-30). Example: 5', '5') || '0'
+      );
+      if (isNaN(trimPercent)) trimPercent = 0;
+      trimPercent = Math.max(0, Math.min(30, trimPercent));
+      if (trimPercent === 0) return;
+
+      loadPreviewImage(function (img) {
+        var cropX = Math.round((img.width * trimPercent) / 100);
+        var cropY = Math.round((img.height * trimPercent) / 100);
+        var cropW = img.width - cropX * 2;
+        var cropH = img.height - cropY * 2;
+        if (cropW < 20 || cropH < 20) return;
+        var canvas = document.createElement('canvas');
+        canvas.width = cropW;
+        canvas.height = cropH;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+        canvasToBlob(canvas, function (blob) {
+          showProcessedPreview(blob, 'cropped-design');
+        });
+      });
+    }
+
+    function processRemoveBackground(sourceSrc, onDone) {
+      if (!sourceSrc) return;
+      loadPreviewImage(function (img) {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+        var width = canvas.width;
+        var height = canvas.height;
+        var visited = new Uint8Array(width * height);
+        var queueX = new Int32Array(width * height);
+        var queueY = new Int32Array(width * height);
+        var head = 0;
+        var tail = 0;
+        var borderSamples = [];
+        var sampleStep = Math.max(1, Math.floor(Math.min(width, height) / 120));
+        var hardThreshold = 2.05;
+
+        function idxFor(x, y) {
+          return y * width + x;
+        }
+
+        function pixelIndex(x, y) {
+          return (y * width + x) * 4;
+        }
+
+        function getRgb(x, y) {
+          var i = pixelIndex(x, y);
+          return [data[i], data[i + 1], data[i + 2]];
+        }
+
+        function pushBorderSample(x, y) {
+          var rgb = getRgb(x, y);
+          borderSamples.push(rgb);
+        }
+
+        for (var sx = 0; sx < width; sx += sampleStep) {
+          pushBorderSample(sx, 0);
+          pushBorderSample(sx, height - 1);
+        }
+        for (var sy = 0; sy < height; sy += sampleStep) {
+          pushBorderSample(0, sy);
+          pushBorderSample(width - 1, sy);
+        }
+
+        if (borderSamples.length === 0) {
+          canvasToBlob(canvas, function (blob) {
+            onDone(blob);
+          });
+          return;
+        }
+
+        var meanR = 0;
+        var meanG = 0;
+        var meanB = 0;
+        for (var s = 0; s < borderSamples.length; s++) {
+          meanR += borderSamples[s][0];
+          meanG += borderSamples[s][1];
+          meanB += borderSamples[s][2];
+        }
+        meanR /= borderSamples.length;
+        meanG /= borderSamples.length;
+        meanB /= borderSamples.length;
+
+        var stdR = 0;
+        var stdG = 0;
+        var stdB = 0;
+        for (var v = 0; v < borderSamples.length; v++) {
+          stdR += Math.pow(borderSamples[v][0] - meanR, 2);
+          stdG += Math.pow(borderSamples[v][1] - meanG, 2);
+          stdB += Math.pow(borderSamples[v][2] - meanB, 2);
+        }
+        stdR = Math.max(18, Math.sqrt(stdR / borderSamples.length));
+        stdG = Math.max(18, Math.sqrt(stdG / borderSamples.length));
+        stdB = Math.max(18, Math.sqrt(stdB / borderSamples.length));
+
+        function normalizedDistance(i) {
+          var dr = (data[i] - meanR) / stdR;
+          var dg = (data[i + 1] - meanG) / stdG;
+          var db = (data[i + 2] - meanB) / stdB;
+          return Math.sqrt(dr * dr + dg * dg + db * db);
+        }
+
+        function gradientStrength(x, y) {
+          var i = pixelIndex(x, y);
+          var x2 = Math.min(width - 1, x + 1);
+          var y2 = Math.min(height - 1, y + 1);
+          var ix = pixelIndex(x2, y);
+          var iy = pixelIndex(x, y2);
+          var dx =
+            Math.abs(data[i] - data[ix]) +
+            Math.abs(data[i + 1] - data[ix + 1]) +
+            Math.abs(data[i + 2] - data[ix + 2]);
+          var dy =
+            Math.abs(data[i] - data[iy]) +
+            Math.abs(data[i + 1] - data[iy + 1]) +
+            Math.abs(data[i + 2] - data[iy + 2]);
+          return Math.max(dx, dy);
+        }
+
+        function enqueue(x, y) {
+          var idx = idxFor(x, y);
+          if (visited[idx]) return;
+          visited[idx] = 1;
+          queueX[tail] = x;
+          queueY[tail] = y;
+          tail += 1;
+        }
+
+        for (var bx = 0; bx < width; bx++) {
+          enqueue(bx, 0);
+          enqueue(bx, height - 1);
+        }
+        for (var by = 0; by < height; by++) {
+          enqueue(0, by);
+          enqueue(width - 1, by);
+        }
+
+        while (head < tail) {
+          var x = queueX[head];
+          var y = queueY[head];
+          head += 1;
+          var i = pixelIndex(x, y);
+          var score = normalizedDistance(i);
+          var edge = gradientStrength(x, y);
+          if (score > hardThreshold) continue;
+          // Avoid crossing strong object edges while flooding from border.
+          if (edge > 110) continue;
+          data[i + 3] = 0;
+
+          if (x > 0) enqueue(x - 1, y);
+          if (x < width - 1) enqueue(x + 1, y);
+          if (y > 0) enqueue(x, y - 1);
+          if (y < height - 1) enqueue(x, y + 1);
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        canvasToBlob(canvas, function (blob) {
+          onDone(blob);
+        });
+      });
+      function loadPreviewImage(onReady) {
+        var image = new Image();
+        image.onload = function () {
+          onReady(image);
+        };
+        image.src = sourceSrc;
+      }
+    }
+
+    function toggleRemoveBackground(enabled) {
+      if (!reviewImage) return;
+      removeBgEnabled = enabled;
+      if (removeBgBtn) removeBgBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+      if (zoomFrame) zoomFrame.classList.toggle('is-transparent-bg', enabled);
+      if (!enabled) {
+        if (baseImageSrc) {
+          clearPreviewUrl();
+          previewUrl = baseImageSrc;
+          reviewImage.src = baseImageSrc;
+          if (zoomPane) zoomPane.style.backgroundImage = 'url("' + baseImageSrc + '")';
+        }
+        return;
+      }
+      var src = baseImageSrc || reviewImage.src;
+      processRemoveBackground(src, function (blob) {
+        clearPreviewUrl();
+        previewUrl = URL.createObjectURL(blob);
+        reviewImage.src = previewUrl;
+        if (zoomPane) zoomPane.style.backgroundImage = 'url("' + previewUrl + '")';
+      });
+    }
+
+    function clearUploadedDesign() {
+      input.value = '';
+      filename.textContent = 'No file selected';
+      resetUploadUi();
+      stopProgress(true);
     }
 
     input.addEventListener('change', setFilename);
@@ -194,10 +484,25 @@
 
     if (progressStop) {
       progressStop.addEventListener('click', function () {
-        input.value = '';
-        filename.textContent = 'No file selected';
-        resetUploadUi();
-        stopProgress(true);
+        clearUploadedDesign();
+      });
+    }
+
+    if (deleteImageBtn) {
+      deleteImageBtn.addEventListener('click', function () {
+        clearUploadedDesign();
+      });
+    }
+
+    if (cropBtn) {
+      cropBtn.addEventListener('click', function () {
+        applyCropAndTrim();
+      });
+    }
+
+    if (removeBgBtn) {
+      removeBgBtn.addEventListener('click', function () {
+        toggleRemoveBackground(!removeBgEnabled);
       });
     }
 
@@ -546,6 +851,21 @@
         return h.indexOf(n) !== -1;
       }
 
+      function tokenize(name) {
+        var stop = {
+          patch: true,
+          patches: true,
+          custom: true,
+          and: true,
+          the: true
+        };
+        return normalize(name)
+          .split(' ')
+          .filter(function (t) {
+            return t && !stop[t];
+          });
+      }
+
       function loadPricing() {
         if (!pricingUrl) {
           pricingReady = true;
@@ -557,31 +877,58 @@
             return res.json();
           })
           .then(function (rows) {
-            var aliases = [
-              '3D Embroidered patch',
-              '3D Embroidered',
-              'Embroidered & 3D Embroidered',
-              productName
-            ].filter(Boolean);
+            var allRows = rows || [];
+            var normalizedProduct = normalize(productName);
+            var productTokens = tokenize(productName);
+            var groups = {};
 
-            var matches = [];
-            for (var a = 0; a < aliases.length; a++) {
-              var alias = aliases[a];
-              matches = (rows || []).filter(function (row) {
-                return normalize(row.name) === normalize(alias);
-              });
-              if (matches.length > 0) break;
-            }
+            allRows.forEach(function (row) {
+              var key = normalize(row.name);
+              if (!key) return;
+              if (!groups[key]) {
+                groups[key] = {
+                  key: key,
+                  name: row.name,
+                  rows: [],
+                  score: 0
+                };
+              }
+              groups[key].rows.push(row);
+            });
 
-            if (matches.length === 0) {
-              matches = (rows || []).filter(function (row) {
-                return (
-                  includesWords(row.name, '3D Embroidered') ||
-                  includesWords(row.name, productName)
-                );
-              });
+            Object.keys(groups).forEach(function (key) {
+              var group = groups[key];
+              var score = 0;
+              if (key === normalizedProduct) {
+                score += 1000;
+              } else if (
+                includesWords(group.name, productName) ||
+                includesWords(productName, group.name)
+              ) {
+                score += 500;
+              }
+
+              var nameTokens = tokenize(group.name);
+              var overlap = 0;
+              for (var i = 0; i < productTokens.length; i++) {
+                if (nameTokens.indexOf(productTokens[i]) !== -1) overlap += 1;
+              }
+              score += overlap * 25;
+              group.score = score;
+            });
+
+            var best = null;
+            Object.keys(groups).forEach(function (key) {
+              var group = groups[key];
+              if (!best || group.score > best.score) best = group;
+            });
+
+            if (best && best.score > 0) {
+              pricingRows = best.rows;
+            } else {
+              // No confident product-name match; keep empty so fallback pricing rules apply.
+              pricingRows = [];
             }
-            pricingRows = matches;
             pricingReady = true;
             updateSizer();
           })
