@@ -59,6 +59,8 @@
     var progressStop = document.querySelector('[data-upload-stop]');
     var reviewBox = document.querySelector('[data-upload-review]');
     var reviewImage = document.querySelector('[data-upload-preview-image]');
+    var dimWidthLabel = document.querySelector('[data-upload-dim-width]');
+    var dimHeightLabel = document.querySelector('[data-upload-dim-height]');
     var changeFile = document.querySelector('[data-upload-change]');
     var patchSizer = document.querySelector('[data-patch-sizer]');
     var checkoutWrap = document.querySelector('[data-checkout-wrap]');
@@ -70,6 +72,7 @@
     var progressTimer = null;
     var progressValue = 0;
     var previewUrl = '';
+    var autoSizeFromImage = null;
 
     function renderProgress() {
       if (!progressFill || !progressPercent) return;
@@ -103,6 +106,8 @@
       renderProgress();
       clearPreviewUrl();
       if (reviewImage) reviewImage.removeAttribute('src');
+      if (dimWidthLabel) dimWidthLabel.textContent = '2.00"';
+      if (dimHeightLabel) dimHeightLabel.textContent = '2.19"';
       if (zoomPane) zoomPane.style.backgroundImage = '';
     }
 
@@ -140,6 +145,15 @@
         if (reviewImage) {
           clearPreviewUrl();
           previewUrl = URL.createObjectURL(input.files[0]);
+          reviewImage.onload = function () {
+            if (
+              typeof autoSizeFromImage === 'function' &&
+              reviewImage.naturalWidth > 0 &&
+              reviewImage.naturalHeight > 0
+            ) {
+              autoSizeFromImage(reviewImage.naturalWidth, reviewImage.naturalHeight);
+            }
+          };
           reviewImage.src = previewUrl;
           if (zoomPane) zoomPane.style.backgroundImage = 'url("' + previewUrl + '")';
         }
@@ -250,6 +264,36 @@
       var quoteTimer = null;
       var quoteRequestId = 0;
 
+      function formatInches(value) {
+        return value.toFixed(2) + '"';
+      }
+
+      function updatePreviewDimensions(width, height) {
+        if (dimWidthLabel) dimWidthLabel.textContent = formatInches(width);
+        if (dimHeightLabel) dimHeightLabel.textContent = formatInches(height);
+      }
+
+      function setDimensionsFromImageAspect(naturalWidth, naturalHeight) {
+        if (!widthInput || !heightInput) return;
+        if (!naturalWidth || !naturalHeight) return;
+        var ratio = naturalWidth / naturalHeight;
+        var baseShortSide = 2;
+        var width = baseShortSide;
+        var height = baseShortSide;
+        if (ratio >= 1) {
+          width = baseShortSide * ratio;
+          height = baseShortSide;
+        } else {
+          width = baseShortSide;
+          height = baseShortSide / ratio;
+        }
+        widthInput.value = (Math.round(width * 100) / 100).toFixed(2);
+        heightInput.value = (Math.round(height * 100) / 100).toFixed(2);
+        updateSizer();
+      }
+
+      autoSizeFromImage = setDimensionsFromImageAspect;
+
       function clampQty(v) {
         var n = parseInt(v || '10', 10);
         if (isNaN(n) || n < 10) n = 10;
@@ -296,8 +340,8 @@
           });
       }
 
-      function calcUnitPrice(qty, heightValue) {
-        var sizeRows = getClosestSizeRows(heightValue);
+      function calcUnitPrice(qty, sizeValue) {
+        var sizeRows = getClosestSizeRows(sizeValue);
         if (sizeRows.length > 0) {
           var selected = sizeRows[0];
           for (var i = 0; i < sizeRows.length; i++) {
@@ -320,9 +364,10 @@
         var h = parseFloat(heightInput.value || '2.19');
         if (isNaN(w) || w < 1) w = 1;
         if (isNaN(h) || h < 1) h = 1;
+        var sizeValue = Math.max(w, h);
         var qty = clampQty(qtyInput.value);
         qtyInput.value = qty;
-        var unit = calcUnitPrice(qty, h);
+        var unit = calcUnitPrice(qty, sizeValue);
         var total = unit * qty;
         if (priceEl) priceEl.textContent = '$' + unit.toFixed(2);
         if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
@@ -331,7 +376,8 @@
         if (calcTotalHidden) calcTotalHidden.value = '$' + total.toFixed(2);
         if (calcCustomPriceHidden) calcCustomPriceHidden.value = unit.toFixed(2);
         if (calcQuoteTokenHidden) calcQuoteTokenHidden.value = '';
-        renderTierTable(h, qty);
+        renderTierTable(sizeValue, qty);
+        updatePreviewDimensions(w, h);
         requestQuoteFromBackend(w, h, qty);
       }
 

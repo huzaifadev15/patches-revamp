@@ -1770,6 +1770,8 @@ body.mobile-nav-open {
   min-height: 340px;
   position: relative;
   cursor: zoom-in;
+  margin-top: 1.8rem;
+  margin-left: 1.85rem;
 }
 
 .product-page__artwork-img {
@@ -1781,6 +1783,66 @@ body.mobile-nav-open {
 
 .product-page__artwork-zoom-wrap {
   position: relative;
+}
+
+.product-page__dim-guide {
+  position: absolute;
+  color: #20a568;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.product-page__dim-guide::before {
+  content: "";
+  position: absolute;
+  background: #82c9a2;
+}
+
+.product-page__dim-guide--top {
+  left: 0;
+  right: 0;
+  top: -1.35rem;
+  text-align: center;
+}
+
+.product-page__dim-guide--top::before {
+  left: 0;
+  right: 0;
+  top: 0.55rem;
+  height: 1px;
+}
+
+.product-page__dim-guide--top span {
+  display: inline-block;
+  background: #efefef;
+  padding: 0 0.35rem;
+}
+
+.product-page__dim-guide--left {
+  top: 0;
+  bottom: 0;
+  left: -1.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-page__dim-guide--left::before {
+  top: 0;
+  bottom: 0;
+  left: 0.78rem;
+  width: 1px;
+}
+
+.product-page__dim-guide--left span {
+  transform: rotate(-90deg);
+  transform-origin: center;
+  display: inline-block;
+  background: #efefef;
+  padding: 0 0.3rem;
 }
 
 .product-page__zoom-pane {
