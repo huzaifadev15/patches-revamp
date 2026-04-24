@@ -2137,6 +2137,472 @@ body.mobile-nav-open {
   margin-top: 1rem;
 }
 
+.product-page__ai-card {
+  margin-top: 0.9rem;
+  border: 1px solid #ff2a8d;
+  border-radius: 12px;
+  background: #f2dce8;
+  padding: 1.1rem 1rem 1rem;
+  text-align: center;
+}
+
+.product-page__ai-title {
+  margin: 0;
+  font-size: 2.05rem;
+  font-weight: 800;
+  line-height: 1.12;
+  color: #1a1a1a;
+}
+
+.product-page__ai-subtitle {
+  margin: 0.45rem auto 0;
+  max-width: 420px;
+  font-size: 0.98rem;
+  color: #2f2f2f;
+  line-height: 1.35;
+}
+
+.product-page__ai-actions {
+  margin-top: 0.7rem;
+  display: flex;
+  justify-content: center;
+}
+
+.product-page__ai-generate-btn {
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  padding: 0.65rem 1.3rem;
+  font: inherit;
+  font-size: 1.04rem;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff0f7b 0%, #6b23ff 100%);
+}
+
+.product-page__ai-generate-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.product-page__ai-status {
+  margin: 0.65rem 0 0;
+  min-height: 1.1rem;
+  font-size: 0.95rem;
+  color: #3d3d3d;
+}
+
+.product-page__ai-results {
+  margin-top: 0.55rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.product-page__ai-result-card {
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.6rem;
+}
+
+.product-page__ai-result-card.is-placeholder {
+  min-height: 235px;
+  background: #efefef;
+}
+
+.product-page__ai-result-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+.product-page__ai-result-btn {
+  margin-top: 0.55rem;
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  background: #f6f6f6;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---- Creator Studio Modal ---- */
+
+.cs-modal[hidden] {
+  display: none !important;
+}
+
+.cs-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.cs-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.cs-modal__dialog {
+  position: relative;
+  width: min(1020px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  border-radius: 16px;
+  background: #13111f;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* LEFT PANEL */
+
+.cs-modal__left {
+  padding: 1.6rem 1.5rem 1.6rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.cs-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: 0;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cs-modal__close:hover {
+  color: #fff;
+}
+
+.cs-modal__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a78bfa;
+}
+
+.cs-modal__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.cs-modal__subtitle {
+  margin: 0 0 1.1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+}
+
+.cs-modal__label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cs-modal__prompt-wrap {
+  position: relative;
+}
+
+.cs-modal__prompt {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  padding: 0.75rem 0.85rem 2.8rem;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  resize: none;
+  min-height: 108px;
+}
+
+.cs-modal__prompt::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cs-modal__prompt:focus {
+  outline: none;
+  border-color: #7c3aed;
+}
+
+.cs-modal__generate {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.45rem 1.1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7c3aed 0%, #a855f7 100%);
+}
+
+.cs-modal__generate:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cs-modal__status {
+  margin: 0.5rem 0 0;
+  min-height: 1rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cs-modal__params-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cs-modal__params-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cs-modal__randomize {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.78rem;
+  color: #a78bfa;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cs-modal__randomize:hover {
+  text-decoration: underline;
+}
+
+.cs-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cs-modal__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.cs-modal__tag strong {
+  font-weight: 800;
+}
+
+.cs-modal__tag--style {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.cs-modal__tag--subject {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.cs-modal__tag--text {
+  background: rgba(167, 139, 250, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+}
+
+.cs-modal__tag--bg {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cs-modal__preview-prompt {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.cs-modal__preview-prompt em {
+  color: #a78bfa;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* RIGHT PANEL */
+
+.cs-modal__right {
+  padding: 1.6rem 1.75rem 1.6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  background: #0e0c1a;
+  border-radius: 0 16px 16px 0;
+}
+
+.cs-modal__result-area {
+  width: 100%;
+  flex: 1;
+  min-height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #1c1830;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-modal__result-placeholder {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.cs-modal__result-placeholder-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.cs-modal__result-placeholder p {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.cs-modal__result-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+}
+
+.cs-modal__ai-badge {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.cs-modal__result-meta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cs-modal__result-meta[hidden] {
+  display: none !important;
+}
+
+.cs-modal__result-filename {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cs-modal__result-res {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cs-modal__use-btn {
+  width: 100%;
+  min-height: 50px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.cs-modal__use-btn[hidden] {
+  display: none !important;
+}
+
+.cs-modal__use-btn:hover {
+  background: #f0f0f0;
+}
+
+.cs-modal__powered {
+  margin: 0;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 700px) {
+  .cs-modal__dialog {
+    grid-template-columns: 1fr;
+    border-radius: 12px;
+  }
+
+  .cs-modal__left {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.2rem 1rem;
+  }
+
+  .cs-modal__right {
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .cs-modal__result-area {
+    min-height: 220px;
+  }
+}
+
 .product-page__option-title {
   margin: 0 0 0.5rem;
   font-size: 0.98rem;
@@ -2676,6 +3142,24 @@ body.mobile-nav-open {
 @media (max-width: 989px) {
   .product-page__sizer-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .product-page__ai-title {
+    font-size: 1.55rem;
+  }
+
+  .product-page__ai-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .product-page__ai-generate-btn {
+    width: 100%;
+    max-width: 330px;
+    font-size: 0.98rem;
+  }
+
+  .product-page__ai-generate-btn {
+    font-size: 0.98rem;
   }
 
   .product-page__option-grid {

@@ -82,19 +82,72 @@
           <p class="product-page__upload-file" data-upload-filename>No file selected</p>
           <p class="product-page__upload-note">Login to see previous designs</p>
         </div>
-        <div class="product-page__option-group">
-          <p class="product-page__option-title">Generate with AI (Flux)</p>
-          <textarea
-            class="product-page__notes"
-            rows="3"
-            data-ai-prompt
-            placeholder="Describe your patch idea, e.g. Eagle head, bold outline, black and gold, max 4 colors."
-          ></textarea>
-          <div class="product-page__artwork-tools">
-            <button type="button" data-ai-generate>Generate design</button>
+        <div class="product-page__ai-card">
+          <p class="product-page__ai-title">Create a design with Ninja AI</p>
+          <p class="product-page__ai-subtitle">
+            Unleash your creativity and design your vision effortlessly with Ninja AI
+          </p>
+          <div class="product-page__ai-actions">
+            <button type="button" class="product-page__ai-generate-btn" data-ai-open-modal>Create an Image ✨</button>
           </div>
-          <p class="product-page__upload-text" data-ai-status></p>
-          <div data-ai-results></div>
+        </div>
+
+        <div class="cs-modal" data-ai-modal hidden>
+          <div class="cs-modal__backdrop" data-ai-close-modal></div>
+          <div class="cs-modal__dialog" role="dialog" aria-modal="true" aria-label="Ninja AI Image Creator">
+
+            <div class="cs-modal__left">
+              <button type="button" class="cs-modal__close" data-ai-close-modal aria-label="Close">×</button>
+
+              <p class="cs-modal__eyebrow">✏ CREATOR STUDIO</p>
+              <h2 class="cs-modal__title">Ninja AI Image Creator</h2>
+              <p class="cs-modal__subtitle">Transform your ideas into high-fidelity patch visuals using our advanced neural engine.</p>
+
+              <label class="cs-modal__label">Describe your vision</label>
+              <div class="cs-modal__prompt-wrap">
+                <textarea
+                  class="cs-modal__prompt"
+                  data-ai-prompt
+                  rows="4"
+                  placeholder="An embroidered skull patch, bold outline, black and red, on a dark background..."
+                ></textarea>
+                <button type="button" class="cs-modal__generate" data-ai-generate>Generate</button>
+              </div>
+              <p class="cs-modal__status" data-ai-status></p>
+
+              <div class="cs-modal__params-header">
+                <span class="cs-modal__params-label">Example Parameters</span>
+                <button type="button" class="cs-modal__randomize" data-ai-randomize>↺ Randomize</button>
+              </div>
+              <div class="cs-modal__tags">
+                <span class="cs-modal__tag cs-modal__tag--style">STYLE <strong data-ai-tag-style>Embroidered</strong></span>
+                <span class="cs-modal__tag cs-modal__tag--subject">SUBJECT <strong data-ai-tag-subject>Eagle Head</strong></span>
+                <span class="cs-modal__tag cs-modal__tag--text">TEXT <strong data-ai-tag-text>NINJA</strong></span>
+                <span class="cs-modal__tag cs-modal__tag--bg">BG <strong data-ai-tag-bg>Black</strong></span>
+              </div>
+              <p class="cs-modal__preview-prompt" data-ai-preview-prompt>
+                "A professional embroidered patch of a <em>stylized eagle head</em> with the text <em>NINJA</em> in bold, black background, bold outline, max 4 colors..."
+              </p>
+            </div>
+
+            <div class="cs-modal__right">
+              <div class="cs-modal__result-area" data-ai-results>
+                <div class="cs-modal__result-placeholder">
+                  <span class="cs-modal__result-placeholder-icon">🖼</span>
+                  <p>Your generated image will appear here</p>
+                </div>
+              </div>
+              <div class="cs-modal__result-meta" data-ai-result-meta hidden>
+                <span class="cs-modal__result-filename" data-ai-result-filename>Result.png</span>
+                <span class="cs-modal__result-res" data-ai-result-res>1024×1024</span>
+              </div>
+              <button type="button" class="cs-modal__use-btn" data-ai-use-design hidden>
+                ✔ USE THIS DESIGN
+              </button>
+              <p class="cs-modal__powered">Powered by Flux via fal.ai</p>
+            </div>
+
+          </div>
         </div>
         <div class="product-page__progress" data-upload-progress hidden>
           <div class="product-page__progress-character" aria-hidden="true">

@@ -70,6 +70,9 @@
     var zoomWrap = document.querySelector('[data-upload-zoom-wrap]');
     var zoomPane = document.querySelector('[data-upload-zoom-pane]');
     var zoomFrame = document.querySelector('[data-upload-zoom-frame]');
+    var aiOpenModalBtn = document.querySelector('[data-ai-open-modal]');
+    var aiModal = document.querySelector('[data-ai-modal]');
+    var aiCloseModalBtns = document.querySelectorAll('[data-ai-close-modal]');
     var aiPromptInput = document.querySelector('[data-ai-prompt]');
     var aiGenerateBtn = document.querySelector('[data-ai-generate]');
     var aiStatus = document.querySelector('[data-ai-status]');
@@ -77,6 +80,17 @@
     var aiPromptHidden = document.querySelector('[data-ai-prompt-hidden]');
     var aiRequestHidden = document.querySelector('[data-ai-request-hidden]');
     var aiImageHidden = document.querySelector('[data-ai-image-hidden]');
+    var aiRandomizeBtn = document.querySelector('[data-ai-randomize]');
+    var aiUseDesignBtn = document.querySelector('[data-ai-use-design]');
+    var aiResultMeta = document.querySelector('[data-ai-result-meta]');
+    var aiResultFilename = document.querySelector('[data-ai-result-filename]');
+    var aiResultRes = document.querySelector('[data-ai-result-res]');
+    var aiTagStyle = document.querySelector('[data-ai-tag-style]');
+    var aiTagSubject = document.querySelector('[data-ai-tag-subject]');
+    var aiTagText = document.querySelector('[data-ai-tag-text]');
+    var aiTagBg = document.querySelector('[data-ai-tag-bg]');
+    var aiPreviewPrompt = document.querySelector('[data-ai-preview-prompt]');
+    var aiCurrentImageUrl = '';
     if (!dropzone || !input || !filename) return;
 
     var progressTimer = null;
@@ -88,6 +102,62 @@
     var aiGenerating = false;
     var aiGenerateUrl = patchSizer ? (patchSizer.getAttribute('data-ai-generate-url') || '').trim() : '';
     var aiStatusUrl = patchSizer ? (patchSizer.getAttribute('data-ai-status-url') || '').trim() : '';
+
+    var csRandomExamples = [
+      { style: 'Embroidered', subject: 'Eagle Head', text: 'NINJA', bg: 'Black', prompt: 'A professional embroidered patch of a stylized eagle head with the text NINJA in bold, black background, bold outline, max 4 colors' },
+      { style: 'Logo', subject: 'Wolf Silhouette', text: 'APEX', bg: 'Navy Blue', prompt: 'A clean embroidered logo patch of a wolf silhouette with text APEX below, navy blue background, thick border, 3-color palette' },
+      { style: 'Retro', subject: 'Biker Skull', text: 'IRON CLUB', bg: 'Red', prompt: 'A retro biker patch featuring a stylized skull wearing a helmet, text IRON CLUB around the border, red background, bold contrast' },
+      { style: 'Minimal', subject: 'Dragon', text: 'RANGER', bg: 'Forest Green', prompt: 'A minimal embroidered patch of a dragon in flight, text RANGER below, forest green background, clean lines, limited color palette' },
+      { style: 'Military', subject: 'Compass Rose', text: 'DELTA UNIT', bg: 'Olive', prompt: 'A military-style patch with a compass rose design, text DELTA UNIT in block letters, olive drab background, classic insignia style' }
+    ];
+
+    function setRandomExample() {
+      var pick = csRandomExamples[Math.floor(Math.random() * csRandomExamples.length)];
+      if (aiTagStyle) aiTagStyle.textContent = pick.style;
+      if (aiTagSubject) aiTagSubject.textContent = pick.subject;
+      if (aiTagText) aiTagText.textContent = pick.text;
+      if (aiTagBg) aiTagBg.textContent = pick.bg;
+      if (aiPreviewPrompt) aiPreviewPrompt.textContent = '"' + pick.prompt + '..."';
+      if (aiPromptInput && !aiPromptInput.value.trim()) aiPromptInput.placeholder = pick.prompt + '...';
+    }
+
+    function showResultInPanel(url, idx) {
+      if (!aiResults) return;
+      aiResults.innerHTML = '';
+      if (!url) return;
+
+      var badge = document.createElement('span');
+      badge.className = 'cs-modal__ai-badge';
+      badge.textContent = 'AI GENERATED';
+
+      var img = document.createElement('img');
+      img.src = url;
+      img.alt = 'AI generated patch';
+      img.className = 'cs-modal__result-img';
+      img.loading = 'lazy';
+
+      aiResults.appendChild(badge);
+      aiResults.appendChild(img);
+
+      aiCurrentImageUrl = url;
+      if (aiResultMeta) aiResultMeta.hidden = false;
+      if (aiResultFilename) aiResultFilename.textContent = 'Result_' + (idx + 1) + '.png';
+      if (aiResultRes) aiResultRes.textContent = '1024×1024';
+      if (aiUseDesignBtn) aiUseDesignBtn.hidden = false;
+    }
+
+    function openAiModal() {
+      if (!aiModal) return;
+      aiModal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      if (aiPromptInput) aiPromptInput.focus();
+    }
+
+    function closeAiModal() {
+      if (!aiModal) return;
+      aiModal.hidden = true;
+      document.body.style.overflow = '';
+    }
 
     function renderProgress() {
       if (!progressFill || !progressPercent) return;
@@ -297,6 +367,7 @@
           showProcessedPreview(blob, 'ai-patch-' + safeIndex);
           if (aiImageHidden) aiImageHidden.value = url;
           setAiStatus('AI image applied. You can continue with size and checkout.');
+          closeAiModal();
         })
         .catch(function () {
           setAiStatus('Could not apply image. Please try another result.');
@@ -304,43 +375,16 @@
     }
 
     function renderAiResults(images) {
-      if (!aiResults) return;
-      clearAiResults();
       if (!images || images.length === 0) {
         setAiStatus('No image returned. Please try a different prompt.');
         return;
       }
-
-      images.forEach(function (entry, idx) {
-        var url = resolveImageUrl(entry);
-        if (!url) return;
-
-        var card = document.createElement('div');
-        card.style.display = 'inline-block';
-        card.style.marginRight = '10px';
-        card.style.marginBottom = '10px';
-
-        var img = document.createElement('img');
-        img.src = url;
-        img.alt = 'AI generated patch option ' + (idx + 1);
-        img.style.width = '120px';
-        img.style.height = '120px';
-        img.style.objectFit = 'cover';
-        img.style.display = 'block';
-        img.style.marginBottom = '6px';
-        img.loading = 'lazy';
-
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = 'Use this design';
-        btn.addEventListener('click', function () {
-          applyAiImage(url, idx);
-        });
-
-        card.appendChild(img);
-        card.appendChild(btn);
-        aiResults.appendChild(card);
-      });
+      var url = resolveImageUrl(images[0]);
+      if (!url) {
+        setAiStatus('Could not read generated image. Please try again.');
+        return;
+      }
+      showResultInPanel(url, 0);
     }
 
     function pollAiStatus(requestId) {
@@ -711,6 +755,37 @@
     if (aiGenerateBtn) {
       aiGenerateBtn.addEventListener('click', generateAiDesign);
     }
+
+    if (aiUseDesignBtn) {
+      aiUseDesignBtn.addEventListener('click', function () {
+        if (!aiCurrentImageUrl) return;
+        applyAiImage(aiCurrentImageUrl, 0);
+      });
+    }
+
+    if (aiRandomizeBtn) {
+      aiRandomizeBtn.addEventListener('click', setRandomExample);
+    }
+
+    setRandomExample();
+
+    if (aiOpenModalBtn) {
+      aiOpenModalBtn.addEventListener('click', function () {
+        openAiModal();
+      });
+    }
+
+    aiCloseModalBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeAiModal();
+      });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && aiModal && !aiModal.hidden) {
+        closeAiModal();
+      }
+    });
 
     function bindZoom() {
       if (!zoomFrame || !zoomPane || !zoomWrap || !reviewImage) return;
