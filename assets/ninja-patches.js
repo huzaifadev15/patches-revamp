@@ -70,6 +70,13 @@
     var zoomWrap = document.querySelector('[data-upload-zoom-wrap]');
     var zoomPane = document.querySelector('[data-upload-zoom-pane]');
     var zoomFrame = document.querySelector('[data-upload-zoom-frame]');
+    var aiPromptInput = document.querySelector('[data-ai-prompt]');
+    var aiGenerateBtn = document.querySelector('[data-ai-generate]');
+    var aiStatus = document.querySelector('[data-ai-status]');
+    var aiResults = document.querySelector('[data-ai-results]');
+    var aiPromptHidden = document.querySelector('[data-ai-prompt-hidden]');
+    var aiRequestHidden = document.querySelector('[data-ai-request-hidden]');
+    var aiImageHidden = document.querySelector('[data-ai-image-hidden]');
     if (!dropzone || !input || !filename) return;
 
     var progressTimer = null;
@@ -78,6 +85,9 @@
     var autoSizeFromImage = null;
     var removeBgEnabled = false;
     var baseImageSrc = '';
+    var aiGenerating = false;
+    var aiGenerateUrl = patchSizer ? (patchSizer.getAttribute('data-ai-generate-url') || '').trim() : '';
+    var aiStatusUrl = patchSizer ? (patchSizer.getAttribute('data-ai-status-url') || '').trim() : '';
 
     function renderProgress() {
       if (!progressFill || !progressPercent) return;
@@ -246,6 +256,192 @@
         'image/png',
         0.95
       );
+    }
+
+    function setAiStatus(message) {
+      if (!aiStatus) return;
+      aiStatus.textContent = message || '';
+    }
+
+    function clearAiResults() {
+      if (aiResults) aiResults.innerHTML = '';
+    }
+
+    function normalizeImageArray(payload) {
+      if (!payload) return [];
+      if (Array.isArray(payload.images)) return payload.images;
+      if (payload.image && payload.image.url) return [payload.image];
+      if (payload.output && Array.isArray(payload.output.images)) return payload.output.images;
+      if (payload.output && typeof payload.output === 'string') return [{ url: payload.output }];
+      return [];
+    }
+
+    function resolveImageUrl(entry) {
+      if (!entry) return '';
+      if (typeof entry === 'string') return entry;
+      if (typeof entry.url === 'string') return entry.url;
+      if (typeof entry.src === 'string') return entry.src;
+      return '';
+    }
+
+    function applyAiImage(url, idx) {
+      if (!url) return Promise.reject(new Error('missing image url'));
+      setAiStatus('Applying selected AI image...');
+      return fetch(url)
+        .then(function (res) {
+          if (!res.ok) throw new Error('failed to fetch generated image');
+          return res.blob();
+        })
+        .then(function (blob) {
+          var safeIndex = typeof idx === 'number' ? idx + 1 : 1;
+          showProcessedPreview(blob, 'ai-patch-' + safeIndex);
+          if (aiImageHidden) aiImageHidden.value = url;
+          setAiStatus('AI image applied. You can continue with size and checkout.');
+        })
+        .catch(function () {
+          setAiStatus('Could not apply image. Please try another result.');
+        });
+    }
+
+    function renderAiResults(images) {
+      if (!aiResults) return;
+      clearAiResults();
+      if (!images || images.length === 0) {
+        setAiStatus('No image returned. Please try a different prompt.');
+        return;
+      }
+
+      images.forEach(function (entry, idx) {
+        var url = resolveImageUrl(entry);
+        if (!url) return;
+
+        var card = document.createElement('div');
+        card.style.display = 'inline-block';
+        card.style.marginRight = '10px';
+        card.style.marginBottom = '10px';
+
+        var img = document.createElement('img');
+        img.src = url;
+        img.alt = 'AI generated patch option ' + (idx + 1);
+        img.style.width = '120px';
+        img.style.height = '120px';
+        img.style.objectFit = 'cover';
+        img.style.display = 'block';
+        img.style.marginBottom = '6px';
+        img.loading = 'lazy';
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = 'Use this design';
+        btn.addEventListener('click', function () {
+          applyAiImage(url, idx);
+        });
+
+        card.appendChild(img);
+        card.appendChild(btn);
+        aiResults.appendChild(card);
+      });
+    }
+
+    function pollAiStatus(requestId) {
+      if (!aiStatusUrl || !requestId) return Promise.reject(new Error('status endpoint not configured'));
+      var started = Date.now();
+      var timeoutMs = 90000;
+      var intervalMs = 2500;
+
+      return new Promise(function (resolve, reject) {
+        function tick() {
+          var statusEndpoint = aiStatusUrl.replace(/\/$/, '') + '/' + encodeURIComponent(requestId);
+          fetch(statusEndpoint)
+            .then(function (res) {
+              if (!res.ok) throw new Error('status request failed');
+              return res.json();
+            })
+            .then(function (data) {
+              var status = (data && data.status ? String(data.status) : '').toLowerCase();
+              if (status === 'completed' || status === 'succeeded' || status === 'done') {
+                resolve(data);
+                return;
+              }
+              if (status === 'failed' || status === 'error' || status === 'cancelled') {
+                reject(new Error((data && data.error) || 'generation failed'));
+                return;
+              }
+              if (Date.now() - started > timeoutMs) {
+                reject(new Error('generation timed out'));
+                return;
+              }
+              setAiStatus('Generating image...');
+              setTimeout(tick, intervalMs);
+            })
+            .catch(function (err) {
+              if (Date.now() - started > timeoutMs) {
+                reject(err);
+                return;
+              }
+              setTimeout(tick, intervalMs);
+            });
+        }
+        tick();
+      });
+    }
+
+    function generateAiDesign() {
+      if (!aiGenerateUrl || !aiStatusUrl) {
+        setAiStatus('AI endpoint is not configured in theme settings.');
+        return;
+      }
+      if (aiGenerating) return;
+      var prompt = aiPromptInput ? (aiPromptInput.value || '').trim() : '';
+      if (!prompt) {
+        setAiStatus('Enter a prompt to generate a patch design.');
+        return;
+      }
+
+      aiGenerating = true;
+      if (aiGenerateBtn) aiGenerateBtn.disabled = true;
+      clearAiResults();
+      setAiStatus('Starting generation...');
+      if (aiPromptHidden) aiPromptHidden.value = prompt;
+      if (aiImageHidden) aiImageHidden.value = '';
+      function finishGeneration() {
+        aiGenerating = false;
+        if (aiGenerateBtn) aiGenerateBtn.disabled = false;
+      }
+
+      fetch(aiGenerateUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: prompt,
+          provider: 'fal.ai',
+          model: 'flux',
+          productHandle: patchSizer ? (patchSizer.getAttribute('data-product-handle') || '') : ''
+        })
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('generate request failed');
+          return res.json();
+        })
+        .then(function (data) {
+          var requestId = data && (data.requestId || data.generation_id || data.id);
+          if (!requestId) throw new Error('missing request id');
+          if (aiRequestHidden) aiRequestHidden.value = requestId;
+          setAiStatus('Generating image...');
+          return pollAiStatus(requestId);
+        })
+        .then(function (statusData) {
+          var images = normalizeImageArray(statusData);
+          renderAiResults(images);
+          if (images.length > 0) {
+            setAiStatus('Select a design to apply it.');
+          }
+          finishGeneration();
+        })
+        .catch(function (err) {
+          setAiStatus('Generation failed. ' + ((err && err.message) || 'Please try again.'));
+          finishGeneration();
+        });
     }
 
     function applyCropAndTrim() {
@@ -512,6 +708,10 @@
       });
     }
 
+    if (aiGenerateBtn) {
+      aiGenerateBtn.addEventListener('click', generateAiDesign);
+    }
+
     function bindZoom() {
       if (!zoomFrame || !zoomPane || !zoomWrap || !reviewImage) return;
 
@@ -562,6 +762,8 @@
       var tierBody = document.querySelector('[data-tier-body]');
       var pricingUrl = sizer.getAttribute('data-pricing-url');
       var productName = (sizer.getAttribute('data-product-name') || '').trim();
+      var productType = (sizer.getAttribute('data-product-type') || '').trim();
+      var productHandle = (sizer.getAttribute('data-product-handle') || '').trim();
       var quoteUrl = (sizer.getAttribute('data-quote-url') || '').trim();
       var basePrice = 6.71;
       var pricingRows = [];
@@ -605,18 +807,16 @@
         return n;
       }
 
-      function selectClosestSize(sizeRows, heightValue) {
-        if (!sizeRows.length) return null;
-        var best = sizeRows[0];
-        var bestDiff = Math.abs((best.size || 0) - heightValue);
-        for (var i = 1; i < sizeRows.length; i++) {
-          var diff = Math.abs((sizeRows[i].size || 0) - heightValue);
-          if (diff < bestDiff) {
-            best = sizeRows[i];
-            bestDiff = diff;
-          }
+      function selectNextAvailableSize(sizes, requestedSize) {
+        if (!sizes.length) return null;
+        var sorted = sizes.slice().sort(function (a, b) {
+          return a - b;
+        });
+        for (var i = 0; i < sorted.length; i++) {
+          if (sorted[i] >= requestedSize) return sorted[i];
         }
-        return best;
+        // If requested size is larger than all available, use largest available.
+        return sorted[sorted.length - 1];
       }
 
       function getClosestSizeRows(heightValue) {
@@ -629,16 +829,11 @@
         sizeMatches.forEach(function (row) {
           if (sizes.indexOf(row.size) === -1) sizes.push(row.size);
         });
-        var closestSize = selectClosestSize(
-          sizes.map(function (s) {
-            return { size: s };
-          }),
-          heightValue
-        );
-        if (!closestSize) return [];
+        var selectedSize = selectNextAvailableSize(sizes, heightValue);
+        if (selectedSize == null) return [];
         return sizeMatches
           .filter(function (row) {
-            return row.size === closestSize.size;
+            return row.size === selectedSize;
           })
           .sort(function (a, b) {
             return a.quantity - b.quantity;
@@ -721,6 +916,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               productName: productName,
+              productType: productType,
+              productHandle: productHandle,
               width: width,
               height: height,
               qty: qty,
@@ -879,6 +1076,7 @@
           .then(function (rows) {
             var allRows = rows || [];
             var normalizedProduct = normalize(productName);
+            var normalizedType = normalize(productType);
             var productTokens = tokenize(productName);
             var groups = {};
 
@@ -895,6 +1093,20 @@
               }
               groups[key].rows.push(row);
             });
+
+            // Highest confidence: exact match to product type, then product title.
+            if (normalizedType && groups[normalizedType]) {
+              pricingRows = groups[normalizedType].rows;
+              pricingReady = true;
+              updateSizer();
+              return;
+            }
+            if (normalizedProduct && groups[normalizedProduct]) {
+              pricingRows = groups[normalizedProduct].rows;
+              pricingReady = true;
+              updateSizer();
+              return;
+            }
 
             Object.keys(groups).forEach(function (key) {
               var group = groups[key];
