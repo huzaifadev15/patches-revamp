@@ -60,6 +60,11 @@
         <input type="hidden" name="properties[custom_price]" value="" data-calc-custom-price-hidden>
         <input type="hidden" name="properties[Quote Token]" value="" data-calc-quote-token-hidden>
         <input type="hidden" name="properties[Quote API URL]" value="{{ section.settings.quote_api_url | escape }}">
+        <input type="hidden" name="properties[AI Provider]" value="fal.ai">
+        <input type="hidden" name="properties[AI Model]" value="Flux">
+        <input type="hidden" name="properties[AI Prompt]" value="" data-ai-prompt-hidden>
+        <input type="hidden" name="properties[AI Request ID]" value="" data-ai-request-hidden>
+        <input type="hidden" name="properties[AI Image URL]" value="" data-ai-image-hidden>
 
         <div class="product-page__upload-card" data-upload-dropzone>
           <div class="product-page__upload-icon" aria-hidden="true">⬆</div>
@@ -76,6 +81,20 @@
           </label>
           <p class="product-page__upload-file" data-upload-filename>No file selected</p>
           <p class="product-page__upload-note">Login to see previous designs</p>
+        </div>
+        <div class="product-page__option-group">
+          <p class="product-page__option-title">Generate with AI (Flux)</p>
+          <textarea
+            class="product-page__notes"
+            rows="3"
+            data-ai-prompt
+            placeholder="Describe your patch idea, e.g. Eagle head, bold outline, black and gold, max 4 colors."
+          ></textarea>
+          <div class="product-page__artwork-tools">
+            <button type="button" data-ai-generate>Generate design</button>
+          </div>
+          <p class="product-page__upload-text" data-ai-status></p>
+          <div data-ai-results></div>
         </div>
         <div class="product-page__progress" data-upload-progress hidden>
           <div class="product-page__progress-character" aria-hidden="true">
@@ -189,7 +208,11 @@
           data-patch-sizer
           data-pricing-url="{{ 'pricing.json' | asset_url }}"
           data-product-name="{{ product.title | strip | escape }}"
+          data-product-type="{{ product.type | strip | escape }}"
+          data-product-handle="{{ product.handle | escape }}"
           data-quote-url="{{ section.settings.quote_api_url | escape }}"
+          data-ai-generate-url="{{ section.settings.ai_generate_url | escape }}"
+          data-ai-status-url="{{ section.settings.ai_status_url | escape }}"
           hidden
         >
           <div class="product-page__sizer-top">
@@ -340,6 +363,18 @@
       "id": "quote_api_url",
       "label": "Quote API URL",
       "info": "Example: https://your-backend.com/api/quote"
+    },
+    {
+      "type": "text",
+      "id": "ai_generate_url",
+      "label": "AI Generate URL (Shopify app)",
+      "info": "Example: https://your-app.com/api/ai/generate"
+    },
+    {
+      "type": "text",
+      "id": "ai_status_url",
+      "label": "AI Status URL base (Shopify app)",
+      "info": "Example: https://your-app.com/api/ai/generate"
     }
   ]
 }
