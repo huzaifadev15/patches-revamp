@@ -131,6 +131,44 @@
         "settings": {
           "heading": "The Leader in Custom Embroidered Patches"
         }
+      },
+      "whybuyfromninja": {
+        "type": "whybuyfromninja",
+        "settings": {
+          "heading": "Why Buy From Ninja Patches?",
+          "subheading": "At Ninja Patches, we are proud of the service we provide and the quality of our embroidered patches and other products. These are many reasons why you should choose us for your custom patches."
+        }
+      },
+      "howtocreatepatches": {
+        "type": "howtocreatepatches",
+        "settings": {
+          "heading": "How To Create Your Own Custom Patches",
+          "intro": "Creating custom patches has never been easier. Simply choose your style, upload your file, select your shape and size, and checkout."
+        }
+      },
+      "mainproduct": {
+        "type": "mainproduct",
+        "settings": {
+          "quote_api_url": "https://shopify-backend-app-omega.vercel.app/api/quote",
+          "ai_generate_url": "https://shopify-backend-app-omega.vercel.app/api/ai/generate",
+          "ai_status_url": "https://shopify-backend-app-omega.vercel.app/api/ai/generate"
+        }
+      },
+      "productdetailsinfo": {
+        "type": "productdetailsinfo",
+        "settings": {
+          "heading": "Product Details",
+          "body": "<p>Embroidered patches from Ninja Patches offer a vibrant and professional way to feature designs on apparel such as clothing, hats, jackets, or backpacks. Crafted from durable materials with precise embroidery, these custom patches ensure strong and long-lasting adherence to your chosen item.</p><p>Want Embroidery, but your design may be too detailed or intricate? No worries, we will simply upgrade you to our Print + Stitch method which include embroidery and our sublimated print for the finer details of your design.</p>"
+        }
+      },
+      "uploaddesignfeature": {
+        "type": "uploaddesignfeature",
+        "settings": {
+          "heading": "You Upload Your Design We Turn it into an Embroidered Patch",
+          "body": "<p>Once you upload your design, our expert team digitizes it using state-of-the-art embroidery software to ensure every stitch is clean, precise, and production-ready. You will have the option to review a proof before we move forward, so you know exactly how your patch will look before it is made.</p>",
+          "left_badge": "Your Design",
+          "right_badge": "Your Patch"
+        }
       }
     },
     "content_for_index": []
