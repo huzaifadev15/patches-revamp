@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{ content_for_header }}
     <meta name="theme-color" content="#000000">
     <link rel="canonical" href="{{ canonical_url }}">
 
@@ -25,8 +26,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
-    {{ content_for_header }}
-
     <style>
       :root {
         --color-accent: {{ settings.color_accent | default: '#28a745' }};
@@ -45,6 +44,7 @@
     <main id="MainContent" class="main-content" role="main" tabindex="-1">
       {% if request.page_type == 'product' %}
         {% section 'mainproduct' %}
+        {% section 'productpatchexamples' %}
         {% section 'productdetailsinfo' %}
         {% section 'uploaddesignfeature' %}
       {% else %}

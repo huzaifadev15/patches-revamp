@@ -1,0 +1,179 @@
+<section class="home-reviews-wall section-{{ section.id }}">
+  <div class="home-reviews-wall__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="home-reviews-wall__heading">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p class="home-reviews-wall__subheading">{{ section.settings.subheading | escape }}</p>
+    {% endif %}
+
+    {% capture reviews_cards %}
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <article class="home-reviews-wall__card">
+            <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+            {% if block.settings.name != blank %}
+              <h3 class="home-reviews-wall__name">{{ block.settings.name | escape }}</h3>
+            {% endif %}
+            <p class="home-reviews-wall__verified">
+              <span class="home-reviews-wall__dot" aria-hidden="true"></span>
+              Verified buyer
+            </p>
+            {% if block.settings.review != blank %}
+              <p class="home-reviews-wall__text">{{ block.settings.review | escape }}</p>
+            {% endif %}
+          </article>
+        {% endfor %}
+        {% assign reviews_mod = section.blocks.size | modulo: 2 %}
+        {% if reviews_mod == 1 %}
+          {% for block in section.blocks limit: 1 %}
+            <article class="home-reviews-wall__card">
+              <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+              {% if block.settings.name != blank %}
+                <h3 class="home-reviews-wall__name">{{ block.settings.name | escape }}</h3>
+              {% endif %}
+              <p class="home-reviews-wall__verified">
+                <span class="home-reviews-wall__dot" aria-hidden="true"></span>
+                Verified buyer
+              </p>
+              {% if block.settings.review != blank %}
+                <p class="home-reviews-wall__text">{{ block.settings.review | escape }}</p>
+              {% endif %}
+            </article>
+          {% endfor %}
+        {% endif %}
+      {% else %}
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Robert Neumann</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">Ninja Patches worked with me to ensure complete satisfaction with my volunteer organization's unit emblem. Everyone is thrilled with it, and I could not be more pleased with the experience. Highly recommend!</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Ralph Arguelles</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">This is now the second order from Ninja Patches. They are so clean and easy to apply. Customer service is top notch. I may get a little crazy with my next design, but I know they can handle it!</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Donna Austin</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">I have a small embroidery business and I was too tired to do an order for 25 patches, so I outsourced it to Ninja Patches. They did a better job than I could have done, and the price was right. I'll be back.</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Lee Ingram</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">Great quality and service!</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Colin Schiess</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">Awesome quality patches! We got these for our soccer team. Couldn't be happier with the quality and delivery speed. Thank you!</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Lownice Hobson</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">My design was pretty intricate and the patches look amazing!</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Lena Lindsay</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">Absolutely LOVE how my patches came out. Colors and detail definitely a 10+. Working on my next order right now.</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Carlos Cariaga</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">I am 1000 percent satisfied with the patches of my custom design. I will order from Ninja Patches again. They are by far the best patch provider I have used.</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Bobby Martin</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">Well first of all, I received the patches in great time. They were exactly what I ordered and once applying them is even better, once again great work!</p>
+        </article>
+        <article class="home-reviews-wall__card">
+          <p class="home-reviews-wall__stars" aria-label="5 stars">★★★★★</p>
+          <h3 class="home-reviews-wall__name">Darrell DeVor</h3>
+          <p class="home-reviews-wall__verified"><span class="home-reviews-wall__dot" aria-hidden="true"></span>Verified buyer</p>
+          <p class="home-reviews-wall__text">The PVC Velcro back patches came in great and looked better than expected. Quality is amazing and people like them right away.</p>
+        </article>
+      {% endif %}
+    {% endcapture %}
+
+    <div class="home-reviews-wall__scroller">
+      <div class="home-reviews-wall__track">
+        <div class="home-reviews-wall__grid">
+          {{ reviews_cards }}
+        </div>
+        <div class="home-reviews-wall__grid" aria-hidden="true">
+          {{ reviews_cards }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home reviews wall",
+  "tag": "section",
+  "class": "section-home-reviews-wall",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Custom Patches Backed by Incredible Reviews"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Verified Feedback from Authentic Customers"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer name",
+          "default": "Robert Neumann"
+        },
+        {
+          "type": "textarea",
+          "id": "review",
+          "label": "Review text",
+          "default": "Ninja Patches worked with me to ensure complete satisfaction with my volunteer organization's unit emblem. Everyone is thrilled with it, and I could not be more pleased with the experience. Highly recommend!"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "Home reviews wall",
+      "blocks": [
+        { "type": "review", "settings": { "name": "Robert Neumann", "review": "Ninja Patches worked with me to ensure complete satisfaction with my volunteer organization's unit emblem. Everyone is thrilled with it, and I could not be more pleased with the experience. Highly recommend!" } },
+        { "type": "review", "settings": { "name": "Ralph Arguelles", "review": "This is now the second order from Ninja Patches. They are so clean and easy to apply. Customer service is top notch. I may get a little crazy with my next design, but I know they can handle it!" } },
+        { "type": "review", "settings": { "name": "Donna Austin", "review": "I have a small embroidery business and I was too tired to do an order for 25 patches, so I outsourced it to Ninja Patches. They did a better job than I could have done, and the price was right. I'll be back." } },
+        { "type": "review", "settings": { "name": "Lee Ingram", "review": "Great quality and service!" } },
+        { "type": "review", "settings": { "name": "Colin Schiess", "review": "Awesome quality patches! We got these for our soccer team. Couldn't be happier with the quality and delivery speed. Thank you!" } },
+        { "type": "review", "settings": { "name": "Lownice Hobson", "review": "My design was pretty intricate and the patches look amazing!" } },
+        { "type": "review", "settings": { "name": "Lena Lindsay", "review": "Absolutely LOVE how my patches came out. Colors and detail definitely a 10+. Working on my next order right now." } },
+        { "type": "review", "settings": { "name": "Carlos Cariaga", "review": "I am 1000 percent satisfied with the patches of my custom design. I will order from Ninja Patches again. They are by far the best patch provider I have used." } },
+        { "type": "review", "settings": { "name": "Bobby Martin", "review": "Well first of all, I received the patches in great time. They were exactly what I ordered and once applying them is even better, once again great work!" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

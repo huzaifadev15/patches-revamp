@@ -1,0 +1,160 @@
+<section class="home-faq section-{{ section.id }}">
+  <div class="home-faq__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="home-faq__heading">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    <div class="home-faq__accordion">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <details class="home-faq__item" {{ block.shopify_attributes }}>
+            <summary class="home-faq__summary">
+              <span>{{ block.settings.question | escape }}</span>
+              <span class="home-faq__icon" aria-hidden="true"></span>
+            </summary>
+            {% if block.settings.answer != blank %}
+              <div class="home-faq__panel rte">
+                {{ block.settings.answer }}
+              </div>
+            {% endif %}
+          </details>
+        {% endfor %}
+      {% else %}
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>What are custom patches?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Custom patches are personalized embroidered or printed patches made from your logo, artwork, or text. They are commonly used for uniforms, clubs, events, brands, and personal apparel.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>How does pricing work?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Pricing is based on patch size, quantity, backing type, and design complexity. Larger quantities usually reduce the price per patch.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>What backing options are available?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Popular options include iron-on, hook and loop (Velcro), sew-on, adhesive, and magnetic backing. You can choose the one that best fits how you will apply your patches.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>How do I order patches?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Select your patch style, upload your design, choose size and backing, then place your order online. Our team reviews your artwork and confirms details before production.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>Can I create my own design?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Yes. You can upload your own artwork, logo, or concept. If needed, our design team can help refine it to make sure it works well as a patch.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>Are patches washable?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Yes. Our patches are made for durability and can handle normal washing when applied correctly. For best longevity, wash garments inside out on gentle cycles.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>Is there a minimum order quantity?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Minimum quantities can vary by patch type, but small and bulk runs are both available. Contact us if you need help choosing the most cost-effective quantity.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>How fast can I get my order?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Standard production and shipping times depend on order size and approval speed. Rush options may be available if you need your patches by a specific date.</p>
+          </div>
+        </details>
+        <details class="home-faq__item">
+          <summary class="home-faq__summary">
+            <span>Do you offer a sample pack?</span>
+            <span class="home-faq__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="home-faq__panel rte">
+            <p>Yes, sample options are available so you can review quality and materials before larger orders. Reach out and we can guide you to the right sample option.</p>
+          </div>
+        </details>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home FAQ",
+  "tag": "section",
+  "class": "section-home-faq",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQ"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What are custom patches?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Share a helpful answer for this question.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Home FAQ",
+      "blocks": [
+        { "type": "item", "settings": { "question": "What are custom patches?", "answer": "<p>Custom patches are personalized embroidered or printed patches made from your logo, artwork, or text. They are commonly used for uniforms, clubs, events, brands, and personal apparel.</p>" } },
+        { "type": "item", "settings": { "question": "How does pricing work?", "answer": "<p>Pricing is based on patch size, quantity, backing type, and design complexity. Larger quantities usually reduce the price per patch.</p>" } },
+        { "type": "item", "settings": { "question": "What backing options are available?", "answer": "<p>Popular options include iron-on, hook and loop (Velcro), sew-on, adhesive, and magnetic backing. You can choose the one that best fits how you will apply your patches.</p>" } },
+        { "type": "item", "settings": { "question": "How do I order patches?", "answer": "<p>Select your patch style, upload your design, choose size and backing, then place your order online. Our team reviews your artwork and confirms details before production.</p>" } },
+        { "type": "item", "settings": { "question": "Can I create my own design?", "answer": "<p>Yes. You can upload your own artwork, logo, or concept. If needed, our design team can help refine it to make sure it works well as a patch.</p>" } },
+        { "type": "item", "settings": { "question": "Are patches washable?", "answer": "<p>Yes. Our patches are made for durability and can handle normal washing when applied correctly. For best longevity, wash garments inside out on gentle cycles.</p>" } },
+        { "type": "item", "settings": { "question": "Is there a minimum order quantity?", "answer": "<p>Minimum quantities can vary by patch type, but small and bulk runs are both available. Contact us if you need help choosing the most cost-effective quantity.</p>" } },
+        { "type": "item", "settings": { "question": "How fast can I get my order?", "answer": "<p>Standard production and shipping times depend on order size and approval speed. Rush options may be available if you need your patches by a specific date.</p>" } },
+        { "type": "item", "settings": { "question": "Do you offer a sample pack?", "answer": "<p>Yes, sample options are available so you can review quality and materials before larger orders. Reach out and we can guide you to the right sample option.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

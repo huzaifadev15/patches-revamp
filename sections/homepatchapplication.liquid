@@ -1,0 +1,114 @@
+<section class="home-patch-application section-{{ section.id }}">
+  <div class="home-patch-application__inner">
+    <div class="home-patch-application__tabs" role="tablist" aria-label="Patch application tabs">
+      <span class="home-patch-application__tab home-patch-application__tab--active" role="tab" aria-selected="true">
+        {{ section.settings.primary_tab | escape }}
+      </span>
+      <span class="home-patch-application__tab" role="tab" aria-selected="false">
+        {{ section.settings.secondary_tab | escape }}
+      </span>
+    </div>
+
+    <div class="home-patch-application__grid">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <article class="home-patch-application__card" {{ block.shopify_attributes }}>
+            {% if block.settings.link != blank %}
+              <a class="home-patch-application__card-link" href="{{ block.settings.link }}">
+            {% endif %}
+            <div class="home-patch-application__media">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 700
+                  | image_tag:
+                    loading: 'lazy',
+                    class: 'home-patch-application__img',
+                    widths: '220, 360, 520, 700',
+                    sizes: '(min-width: 990px) 18vw, (min-width: 750px) 38vw, 86vw',
+                    alt: block.settings.title
+                }}
+              {% else %}
+                <div class="home-patch-application__ph" aria-hidden="true"></div>
+              {% endif %}
+            </div>
+            {% if block.settings.title != blank %}
+              <h3 class="home-patch-application__title">{{ block.settings.title | escape }}</h3>
+            {% endif %}
+            {% if block.settings.link != blank %}
+              </a>
+            {% endif %}
+          </article>
+        {% endfor %}
+      {% else %}
+        {% assign fallback_titles = 'Heatpress For Garments|Heatpress For Hats|Iron On For Garments|Peel & Stick' | split: '|' %}
+        {% for title in fallback_titles %}
+          <article class="home-patch-application__card">
+            <div class="home-patch-application__media">
+              <div class="home-patch-application__ph" aria-hidden="true"></div>
+            </div>
+            <h3 class="home-patch-application__title">{{ title }}</h3>
+          </article>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home patch application",
+  "tag": "section",
+  "class": "section-home-patch-application",
+  "settings": [
+    {
+      "type": "text",
+      "id": "primary_tab",
+      "label": "Primary tab label",
+      "default": "Pressing Instructions"
+    },
+    {
+      "type": "text",
+      "id": "secondary_tab",
+      "label": "Secondary tab label",
+      "default": "Patch Application Made Easy"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Application card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Heatpress For Garments"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Home patch application",
+      "blocks": [
+        { "type": "item", "settings": { "title": "Heatpress For Garments" } },
+        { "type": "item", "settings": { "title": "Heatpress For Hats" } },
+        { "type": "item", "settings": { "title": "Iron On For Garments" } },
+        { "type": "item", "settings": { "title": "Peel & Stick" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
