@@ -10,17 +10,18 @@
 {
   "current": {
     "color_accent": "#28a745",
-    "color_hero_bg": "#121212",
+    "color_hero_bg": "#000000",
     "sections": {
       "header": {
         "type": "header",
         "settings": {
-          "logo_heading": "FINEYST PATCHES",
+          "logo": "shopify://shop_images/WhatsApp_Image_2026-05-07_at_9.31.53_PM-removebg-preview.png",
+          "logo_heading": "YAK PATCHES",
           "logo_tagline": "Simply apply with a Heatpress",
           "promo_text": "Select Patches Ship as Fast as 5 Business Days. 10pc Mins with Free Shipping!",
           "search_placeholder": "Search Patch Styles",
           "wait_label": "Wait Time: 0 min",
-          "phone": "888-356-3665",
+          "phone": "888-499-7708",
           "account_cta_top": "Hello, sign in",
           "account_cta_bottom": "Account & Reorder",
           "menu": "main-menu",
@@ -41,6 +42,7 @@
           "primary_link": "",
           "secondary_label": "Shop 5 Day Rush Patches",
           "secondary_link": "",
+          "hero_image": "shopify://shop_images/custom-patches.png",
           "badge_text": "NEW! 10 PIECE MINIMUM",
           "card_col1_title": "15+ Varieties of Patch Types",
           "card_col1_text": "",
@@ -168,6 +170,26 @@
           "body": "<p>Once you upload your design, our expert team digitizes it using state-of-the-art embroidery software to ensure every stitch is clean, precise, and production-ready. You will have the option to review a proof before we move forward, so you know exactly how your patch will look before it is made.</p>",
           "left_badge": "Your Design",
           "right_badge": "Your Patch"
+        }
+      },
+      "homefaq": {
+        "type": "homefaq",
+        "settings": {
+          "heading": "FAQ"
+        }
+      },
+      "homepatchapplication": {
+        "type": "homepatchapplication",
+        "settings": {
+          "primary_tab": "Pressing Instructions",
+          "secondary_tab": "Patch Application Made Easy"
+        }
+      },
+      "homereviewswall": {
+        "type": "homereviewswall",
+        "settings": {
+          "heading": "Custom Patches Backed by Incredible Reviews",
+          "subheading": "Verified Feedback from Authentic Customers"
         }
       }
     },
