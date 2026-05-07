@@ -158,6 +158,18 @@
       },
       "productdetailsinfo": {
         "type": "productdetailsinfo",
+        "blocks": {
+          "item_JpjbNi": {
+            "type": "item",
+            "settings": {
+              "title": "Features",
+              "content": "<p>Add content for this item.</p>"
+            }
+          }
+        },
+        "block_order": [
+          "item_JpjbNi"
+        ],
         "settings": {
           "heading": "Product Details",
           "body": "<p>Embroidered patches from Ninja Patches offer a vibrant and professional way to feature designs on apparel such as clothing, hats, jackets, or backpacks. Crafted from durable materials with precise embroidery, these custom patches ensure strong and long-lasting adherence to your chosen item.</p><p>Want Embroidery, but your design may be too detailed or intricate? No worries, we will simply upgrade you to our Print + Stitch method which include embroidery and our sublimated print for the finer details of your design.</p>"
@@ -190,6 +202,23 @@
         "settings": {
           "heading": "Custom Patches Backed by Incredible Reviews",
           "subheading": "Verified Feedback from Authentic Customers"
+        }
+      },
+      "productpatchexamples": {
+        "type": "productpatchexamples",
+        "blocks": {
+          "example_rGXJfM": {
+            "type": "example",
+            "settings": {
+              "caption": "Vibrant Colors & Detail"
+            }
+          }
+        },
+        "block_order": [
+          "example_rGXJfM"
+        ],
+        "settings": {
+          "heading": "Embroidered Patch Examples"
         }
       }
     },
